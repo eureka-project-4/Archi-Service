@@ -1,5 +1,7 @@
 package com.archiservice.exception.handler;
 
+import com.archiservice.exception.BusinessException;
+import com.archiservice.exception.ErrorResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
