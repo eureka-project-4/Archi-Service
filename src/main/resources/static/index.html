@@ -39,7 +39,7 @@
 
             const data = await response.json();
 
-            if (data.result === 'SUCCESS') {
+            if (data.codeName === 'SUCCESS') {
                 localStorage.setItem('accessToken', data.data.accessToken);
                 localStorage.setItem('refreshToken', data.data.refreshToken);
                 localStorage.setItem('username', data.data.username);

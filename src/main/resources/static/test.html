@@ -71,7 +71,7 @@
             });
             const data = await response.json();
 
-            if (data.result === 'SUCCESS') {
+            if (data.codeName === 'SUCCESS') {
                 localStorage.setItem('accessToken', data.data.accessToken);
                 alert('토큰 재발급 성공!');
             } else {
