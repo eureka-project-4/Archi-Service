@@ -5,6 +5,11 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 
+/*
+* 웹소켓 테스트용으로 user 패키지 만들고 진행,
+* 인증인가 구현 완료되면 다 덮어씌워도 됩니다
+* */
+
 @Entity
 @Table(name = "users")
 @Getter
