@@ -1,5 +1,13 @@
 package com.archiservice.common.response;
 
-public class CommonResponse {
+import com.archiservice.common.enums.Result;
+import lombok.Builder;
+import lombok.Getter;
 
+@Getter
+@Builder
+public class CommonResponse<T> {
+    private Result result;
+    private String message;
+    private T data;
 }

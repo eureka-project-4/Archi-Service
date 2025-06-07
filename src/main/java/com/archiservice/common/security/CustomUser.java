@@ -1,6 +1,6 @@
 package com.archiservice.common.security;
 
-import com.archiservice.common.enums.Role;
+import com.archiservice.auth.enums.Role;
 import com.archiservice.user.entity.User;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
@@ -11,7 +11,7 @@ import java.math.BigInteger;
 import java.util.Collection;
 import java.util.Collections;
 
-import static com.archiservice.common.enums.Role.ROLE_USER;
+import static com.archiservice.auth.enums.Role.ROLE_USER;
 
 @Getter
 public class CustomUser implements UserDetails {

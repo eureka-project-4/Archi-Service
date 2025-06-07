@@ -2,7 +2,7 @@ package com.archiservice.auth.service;
 
 import com.archiservice.common.enums.Result;
 import com.archiservice.common.redis.RedisService;
-import com.archiservice.common.response.ApiResponse;
+import com.archiservice.common.response.CommonResponse;
 import com.archiservice.common.security.CustomUser;
 import com.archiservice.common.security.JwtUtil;
 import com.archiservice.user.dto.request.LoginRequestDto;
@@ -27,12 +27,12 @@ public class AuthServiceImpl {
     private final RedisService redisService;
 
     // 로그인
-    public ApiResponse login(LoginRequestDto loginRequest) {
+    public CommonResponse login(LoginRequestDto loginRequest) {
         try {
             // 1. 사용자 조회
             Optional<User> userOpt = userRepository.findByEmail(loginRequest.getEmail());
             if (userOpt.isEmpty()) {
-                return ApiResponse.builder()
+                return CommonResponse.builder()
                         .result(Result.FAIL)
                         .message("존재하지 않는 사용자입니다")
                         .build();
@@ -40,9 +40,14 @@ public class AuthServiceImpl {
 
             User user = userOpt.get();
 
+            // 디버깅 로그 추가
+            log.info("=== 비밀번호 검증 디버깅 ===");
+            log.info("입력된 평문 비밀번호: {}", loginRequest.getPassword());
+            log.info("DB에 저장된 해시: {}", user.getPassword());
+
             // 2. 비밀번호 검증
             if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
-                return ApiResponse.builder()
+                return CommonResponse.builder()
                         .result(Result.FAIL)
                         .message("비밀번호가 올바르지 않습니다")
                         .build();
@@ -62,7 +67,7 @@ public class AuthServiceImpl {
             LoginResponseDto responseDto = LoginResponseDto.success(
                     user.getEmail(), accessToken, refreshToken);
 
-            return ApiResponse.builder()
+            return CommonResponse.builder()
                     .result(Result.SUCCESS)
                     .message("로그인이 완료되었습니다")
                     .data(responseDto)
@@ -70,7 +75,7 @@ public class AuthServiceImpl {
 
         } catch (Exception e) {
             log.error("로그인 실패: {}", e.getMessage());
-            return ApiResponse.builder()
+            return CommonResponse.builder()
                     .result(Result.FAIL)
                     .message("로그인에 실패했습니다")
                     .build();
@@ -78,14 +83,14 @@ public class AuthServiceImpl {
     }
 
     // 토큰 재발급
-    public ApiResponse refresh(String refreshTokenHeader) {
+    public CommonResponse refresh(String refreshTokenHeader) {
         try {
             // 1. Header에서 토큰 추출 (Bearer 제거)
             String refreshToken = refreshTokenHeader.replace("Bearer ", "");
 
             // 2. Refresh Token 유효성 검증
             if (!jwtUtil.validateToken(refreshToken)) {
-                return ApiResponse.builder()
+                return CommonResponse.builder()
                         .result(Result.FAIL)
                         .message("유효하지 않은 Refresh Token입니다")
                         .build();
@@ -96,7 +101,7 @@ public class AuthServiceImpl {
 
             // 4. Redis에서 저장된 Refresh Token과 비교
             if (!redisService.validateRefreshToken(username, refreshToken)) {
-                return ApiResponse.builder()
+                return CommonResponse.builder()
                         .result(Result.FAIL)
                         .message("Refresh Token이 일치하지 않습니다")
                         .build();
@@ -105,7 +110,7 @@ public class AuthServiceImpl {
             // 5. 새로운 Access Token 발급
             Optional<User> userOpt = userRepository.findByEmail(username);
             if (userOpt.isEmpty()) {
-                return ApiResponse.builder()
+                return CommonResponse.builder()
                         .result(Result.FAIL)
                         .message("존재하지 않는 사용자입니다")
                         .build();
@@ -120,7 +125,7 @@ public class AuthServiceImpl {
             LoginResponseDto responseDto = new LoginResponseDto(
                     "토큰 재발급이 완료되었습니다", username, newAccessToken, refreshToken);
 
-            return ApiResponse.builder()
+            return CommonResponse.builder()
                     .result(Result.SUCCESS)
                     .message("토큰 재발급이 완료되었습니다")
                     .data(responseDto)
@@ -128,7 +133,7 @@ public class AuthServiceImpl {
 
         } catch (Exception e) {
             log.error("토큰 재발급 실패: {}", e.getMessage());
-            return ApiResponse.builder()
+            return CommonResponse.builder()
                     .result(Result.FAIL)
                     .message("토큰 재발급에 실패했습니다")
                     .build();
@@ -136,7 +141,7 @@ public class AuthServiceImpl {
     }
 
     // 로그아웃
-    public ApiResponse logout(String accessTokenHeader) {
+    public CommonResponse logout(String accessTokenHeader) {
         try {
             // 1. Header에서 토큰 추출
             String accessToken = accessTokenHeader.replace("Bearer ", "");
@@ -149,14 +154,14 @@ public class AuthServiceImpl {
 
             log.info("사용자 로그아웃: {}", username);
 
-            return ApiResponse.builder()
+            return CommonResponse.builder()
                     .result(Result.SUCCESS)
                     .message("로그아웃이 완료되었습니다")
                     .build();
 
         } catch (Exception e) {
             log.error("로그아웃 실패: {}", e.getMessage());
-            return ApiResponse.builder()
+            return CommonResponse.builder()
                     .result(Result.FAIL)
                     .message("로그아웃에 실패했습니다")
                     .build();
