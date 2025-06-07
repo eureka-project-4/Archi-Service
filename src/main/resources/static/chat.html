@@ -99,7 +99,7 @@
 
 
     function loadInitialMessages() {
-        fetch(`/chat/history/${userId}?page=${page}&size=${size}`)
+        fetch(`/api/chat/history/${userId}?page=${page}&size=${size}`)
             .then(res => res.json())
             .then(response => {
                 const messages = response.data;
@@ -138,7 +138,7 @@
             content: content
         };
 
-        stompClient.send("/app/chat.sendMessage", {}, JSON.stringify(message));
+        stompClient.send("/app/chat/sendMessage", {}, JSON.stringify(message));
         input.value = "";
     }
 
@@ -171,7 +171,7 @@
 
     function loadMoreMessages() {
         isLoading = true;
-        fetch(`/chat/history/${userId}?page=${page}&size=${size}`)
+        fetch(`/api/chat/history/${userId}?page=${page}&size=${size}`)
             .then(res => res.json())
             .then(response => {
                 const messages = response.data;

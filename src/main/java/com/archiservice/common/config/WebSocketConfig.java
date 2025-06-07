@@ -63,20 +63,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                 .setSendBufferSizeLimit(SEND_BUFFER_SIZE_LIMIT_BYTES);
     }
 
-    // 인증 필요시 구현해야함
-//    @Override
-//    public void configureClientInboundChannel(ChannelRegistration registration) {
-//        registration.interceptors(new ChannelInterceptor() {
-//            @Override
-//            public Message<?> preSend(Message<?> message, MessageChannel channel) {
-//                StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
-//                if (accessor != null && StompCommand.CONNECT.equals(accessor.getCommand())) {
-//                    // 인증 부분 개발
-//                }
-//                return message;
-//            }
-//        });
-//    }
+    // TODO : 인증 시스템 구현 후 연결 필요
 
     private TaskScheduler heartbeatScheduler() {
         ThreadPoolTaskScheduler scheduler = new ThreadPoolTaskScheduler();

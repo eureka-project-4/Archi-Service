@@ -1,10 +1,13 @@
 package com.archiservice.chat.service.impl;
 
 import com.archiservice.chat.domain.Chat;
+import com.archiservice.chat.dto.MessageType;
 import com.archiservice.chat.dto.response.ChatMessageDto;
 
 import com.archiservice.chat.repository.ChatRepository;
 import com.archiservice.chat.service.ChatService;
+import com.archiservice.exception.BusinessException;
+import com.archiservice.exception.ErrorCode;
 import com.archiservice.user.domain.User;
 import com.archiservice.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
@@ -38,7 +41,7 @@ public class ChatServiceImpl implements ChatService {
     @Override
     public void handleUserMessage(ChatMessageDto message, Long userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
         Chat chat = Chat.builder()
                 .user(user)
@@ -86,7 +89,7 @@ public class ChatServiceImpl implements ChatService {
 
         // 클라이언트 전송용 DTO
         ChatMessageDto responseDto = ChatMessageDto.builder()
-                .type(ChatMessageDto.MessageType.CHAT)
+                .type(MessageType.CHAT)
                 .sender("gpt-bot")
                 .roomId(String.valueOf(userId))
                 .content(reply)
@@ -110,7 +113,7 @@ public class ChatServiceImpl implements ChatService {
 
         return chats.stream()
                 .map(chat -> ChatMessageDto.builder()
-                        .type(ChatMessageDto.MessageType.CHAT)
+                        .type(MessageType.CHAT)
                         .sender(chat.getSender().name().toLowerCase())
                         .roomId(String.valueOf(userId))
                         .content(chat.getMessage())
