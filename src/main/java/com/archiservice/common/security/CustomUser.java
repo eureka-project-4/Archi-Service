@@ -1,7 +1,7 @@
 package com.archiservice.common.security;
 
 import com.archiservice.auth.enums.Role;
-import com.archiservice.user.entity.User;
+import com.archiservice.user.domain.User;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

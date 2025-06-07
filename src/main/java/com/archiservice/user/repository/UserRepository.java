@@ -1,6 +1,6 @@
 package com.archiservice.user.repository;
 
-import com.archiservice.user.entity.User;
+import com.archiservice.user.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

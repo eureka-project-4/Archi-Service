@@ -1,4 +1,4 @@
-package com.archiservice.user.entity;
+package com.archiservice.user.domain;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;

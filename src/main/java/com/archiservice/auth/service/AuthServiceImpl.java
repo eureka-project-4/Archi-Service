@@ -1,13 +1,12 @@
 package com.archiservice.auth.service;
 
-import com.archiservice.common.enums.Result;
 import com.archiservice.common.redis.RedisService;
-import com.archiservice.common.response.CommonResponse;
+import com.archiservice.common.response.ApiResponse;
 import com.archiservice.common.security.CustomUser;
 import com.archiservice.common.security.JwtUtil;
+import com.archiservice.user.domain.User;
 import com.archiservice.user.dto.request.LoginRequestDto;
 import com.archiservice.user.dto.response.LoginResponseDto;
-import com.archiservice.user.entity.User;
 import com.archiservice.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,13 +26,14 @@ public class AuthServiceImpl {
     private final RedisService redisService;
 
     // 로그인
-    public CommonResponse login(LoginRequestDto loginRequest) {
+    public ApiResponse login(LoginRequestDto loginRequest) {
         try {
             // 1. 사용자 조회
             Optional<User> userOpt = userRepository.findByEmail(loginRequest.getEmail());
             if (userOpt.isEmpty()) {
-                return CommonResponse.builder()
-                        .result(Result.FAIL)
+                return ApiResponse.builder()
+                        .resultCode(404)
+                        .codeName("FAIL")
                         .message("존재하지 않는 사용자입니다")
                         .build();
             }
@@ -47,8 +47,9 @@ public class AuthServiceImpl {
 
             // 2. 비밀번호 검증
             if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
-                return CommonResponse.builder()
-                        .result(Result.FAIL)
+                return ApiResponse.builder()
+                        .resultCode(404)
+                        .codeName("FAIL")
                         .message("비밀번호가 올바르지 않습니다")
                         .build();
             }
@@ -67,31 +68,34 @@ public class AuthServiceImpl {
             LoginResponseDto responseDto = LoginResponseDto.success(
                     user.getEmail(), accessToken, refreshToken);
 
-            return CommonResponse.builder()
-                    .result(Result.SUCCESS)
+            return ApiResponse.builder()
+                    .resultCode(200)
+                    .codeName("SUCCESS")
                     .message("로그인이 완료되었습니다")
                     .data(responseDto)
                     .build();
 
         } catch (Exception e) {
             log.error("로그인 실패: {}", e.getMessage());
-            return CommonResponse.builder()
-                    .result(Result.FAIL)
+            return ApiResponse.builder()
+                    .resultCode(500)
+                    .codeName("FAIL")
                     .message("로그인에 실패했습니다")
                     .build();
         }
     }
 
     // 토큰 재발급
-    public CommonResponse refresh(String refreshTokenHeader) {
+    public ApiResponse refresh(String refreshTokenHeader) {
         try {
             // 1. Header에서 토큰 추출 (Bearer 제거)
             String refreshToken = refreshTokenHeader.replace("Bearer ", "");
 
             // 2. Refresh Token 유효성 검증
             if (!jwtUtil.validateToken(refreshToken)) {
-                return CommonResponse.builder()
-                        .result(Result.FAIL)
+                return ApiResponse.builder()
+                        .resultCode(404)
+                        .codeName("FAIL")
                         .message("유효하지 않은 Refresh Token입니다")
                         .build();
             }
@@ -101,8 +105,9 @@ public class AuthServiceImpl {
 
             // 4. Redis에서 저장된 Refresh Token과 비교
             if (!redisService.validateRefreshToken(username, refreshToken)) {
-                return CommonResponse.builder()
-                        .result(Result.FAIL)
+                return ApiResponse.builder()
+                        .resultCode(404)
+                        .codeName("FAIL")
                         .message("Refresh Token이 일치하지 않습니다")
                         .build();
             }
@@ -110,8 +115,9 @@ public class AuthServiceImpl {
             // 5. 새로운 Access Token 발급
             Optional<User> userOpt = userRepository.findByEmail(username);
             if (userOpt.isEmpty()) {
-                return CommonResponse.builder()
-                        .result(Result.FAIL)
+                return ApiResponse.builder()
+                        .resultCode(404)
+                        .codeName("FAIL")
                         .message("존재하지 않는 사용자입니다")
                         .build();
             }
@@ -125,23 +131,25 @@ public class AuthServiceImpl {
             LoginResponseDto responseDto = new LoginResponseDto(
                     "토큰 재발급이 완료되었습니다", username, newAccessToken, refreshToken);
 
-            return CommonResponse.builder()
-                    .result(Result.SUCCESS)
+            return ApiResponse.builder()
+                    .resultCode(200)
+                    .codeName("SUCCESS")
                     .message("토큰 재발급이 완료되었습니다")
                     .data(responseDto)
                     .build();
 
         } catch (Exception e) {
             log.error("토큰 재발급 실패: {}", e.getMessage());
-            return CommonResponse.builder()
-                    .result(Result.FAIL)
+            return ApiResponse.builder()
+                    .resultCode(500)
+                    .codeName("FAIL")
                     .message("토큰 재발급에 실패했습니다")
                     .build();
         }
     }
 
     // 로그아웃
-    public CommonResponse logout(String accessTokenHeader) {
+    public ApiResponse logout(String accessTokenHeader) {
         try {
             // 1. Header에서 토큰 추출
             String accessToken = accessTokenHeader.replace("Bearer ", "");
@@ -154,15 +162,17 @@ public class AuthServiceImpl {
 
             log.info("사용자 로그아웃: {}", username);
 
-            return CommonResponse.builder()
-                    .result(Result.SUCCESS)
+            return ApiResponse.builder()
+                    .resultCode(200)
+                    .codeName("SUCCESS")
                     .message("로그아웃이 완료되었습니다")
                     .build();
 
         } catch (Exception e) {
             log.error("로그아웃 실패: {}", e.getMessage());
-            return CommonResponse.builder()
-                    .result(Result.FAIL)
+            return ApiResponse.builder()
+                    .resultCode(500)
+                    .codeName("FAIL")
                     .message("로그아웃에 실패했습니다")
                     .build();
         }

@@ -1,6 +1,6 @@
 package com.archiservice.common.security;
 
-import com.archiservice.user.entity.User;
+import com.archiservice.user.domain.User;
 import com.archiservice.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;

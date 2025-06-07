@@ -1,7 +1,6 @@
 package com.archiservice.auth.controller;
 
-import com.archiservice.common.enums.Result;
-import com.archiservice.common.response.CommonResponse;
+import com.archiservice.common.response.ApiResponse;
 import com.archiservice.common.security.CustomUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -20,10 +19,11 @@ public class TestController {
     // ROLE_USER 권한 확인 - 모든 인증된 사용자 접근 가능
     @GetMapping("/user")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<CommonResponse> userTest(@AuthenticationPrincipal CustomUser customUser) {
+    public ResponseEntity<ApiResponse> userTest(@AuthenticationPrincipal CustomUser customUser) {
         return ResponseEntity.ok(
-                CommonResponse.builder()
-                        .result(Result.SUCCESS)
+                ApiResponse.builder()
+                        .resultCode(200)
+                        .codeName("SUCCESS")
                         .message("반갑습니다 " + customUser.getUsername() + "님! (USER 권한)")
                         .data(null)
                         .build()
@@ -33,10 +33,11 @@ public class TestController {
     // ROLE_ADMIN 권한 확인 - ADMIN만 접근 가능
     @GetMapping("/admin")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<CommonResponse> adminTest(@AuthenticationPrincipal CustomUser customUser) {
+    public ResponseEntity<ApiResponse> adminTest(@AuthenticationPrincipal CustomUser customUser) {
         return ResponseEntity.ok(
-                CommonResponse.builder()
-                        .result(Result.SUCCESS)
+                ApiResponse.builder()
+                        .resultCode(200)
+                        .codeName("SUCCESS")
                         .message("반갑습니다 " + customUser.getUsername() + "님! (ADMIN 권한)")
                         .data(null)
                         .build()
@@ -45,10 +46,11 @@ public class TestController {
 
     // 인증만 필요 - 권한 상관없이 로그인만 되어있으면 접근 가능
     @GetMapping("/authenticated")
-    public ResponseEntity<CommonResponse> authenticatedTest(@AuthenticationPrincipal CustomUser customUser) {
+    public ResponseEntity<ApiResponse> authenticatedTest(@AuthenticationPrincipal CustomUser customUser) {
         return ResponseEntity.ok(
-                CommonResponse.builder()
-                        .result(Result.SUCCESS)
+                ApiResponse.builder()
+                        .resultCode(200)
+                        .codeName("SUCCESS")
                         .message("인증된 사용자: " + customUser.getUsername() + "님 (권한: " + customUser.getRole() + ")")
                         .data(null)
                         .build()
@@ -57,10 +59,11 @@ public class TestController {
 
     // 토큰 없이 접근 가능 (테스트용)
     @GetMapping("/public")
-    public ResponseEntity<CommonResponse> publicTest() {
+    public ResponseEntity<ApiResponse> publicTest() {
         return ResponseEntity.ok(
-                CommonResponse.builder()
-                        .result(Result.SUCCESS)
+                ApiResponse.builder()
+                        .resultCode(200)
+                        .codeName("SUCCESS")
                         .message("누구나 접근 가능한 API입니다")
                         .data(null)
                         .build()
