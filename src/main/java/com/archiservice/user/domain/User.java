@@ -27,5 +27,5 @@ public class User {
     private LocalDateTime updatedAt;
 
     private String ageCode;
-    private BigInteger tagCode;
+    private Long tagCode;
 }
