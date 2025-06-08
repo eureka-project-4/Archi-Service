@@ -1,4 +1,4 @@
-package com.archiservice.plan.domain;
+package com.archiservice.product.plan.domain;
 
 import com.archiservice.common.TimeStamp;
 import jakarta.persistence.*;
