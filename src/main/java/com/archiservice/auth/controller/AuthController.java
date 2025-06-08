@@ -6,10 +6,12 @@ import com.archiservice.auth.dto.response.RefreshResponseDto;
 import com.archiservice.auth.service.AuthService;
 import com.archiservice.common.response.ApiResponse;
 import com.archiservice.auth.dto.request.LoginRequestDto;
+import com.archiservice.common.security.CustomUser;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,7 +29,7 @@ public class AuthController {
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<ApiResponse<RefreshResponseDto>> refresh(@RequestHeader("Authorization") String refreshToken) {
+    public ResponseEntity<ApiResponse<RefreshResponseDto>> refresh(@RequestHeader("Authorization") String refreshToken, @AuthenticationPrincipal CustomUser customUser) {
         return ResponseEntity.ok(authService.refresh(refreshToken));
     }
 

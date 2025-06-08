@@ -18,6 +18,9 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -58,18 +61,11 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public ApiResponse<RefreshResponseDto> refresh(String refreshTokenHeader) {
-        String refreshToken = refreshTokenHeader.substring(7);
-        String email = jwtUtil.extractEmail(refreshToken);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
-        if (!redisService.validateRefreshToken(email, refreshToken)) {
-            throw new InvalidTokenException("Refresh Token 이 일치하지 않습니다.");
-        }
-
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(UserNotFoundException::new);
-
-        CustomUser customUser = new CustomUser(user);
-        String newAccessToken = jwtUtil.generateAccessToken(customUser);
+        String newAccessToken = jwtUtil.generateAccessToken(userDetails);
 
         RefreshResponseDto responseDto = new RefreshResponseDto(email, newAccessToken);
 
