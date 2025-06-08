@@ -16,7 +16,7 @@ public class TagMeta extends TimeStamp {
     @EmbeddedId
     private TagMetaId id;
 
-    @Column(name = "tag_description")
+    @Column(name = "tag_description", length = 50)
     private String tagDescription;
 
     @Column(name = "bit_position")
