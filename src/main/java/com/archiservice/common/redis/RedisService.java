@@ -21,56 +21,56 @@ public class RedisService {
     private static final String REFRESH_TOKEN_PREFIX = "refresh_token:";
 
     // Refresh Token 저장
-    public void saveRefreshToken(String username, String refreshToken) {
-        String key = REFRESH_TOKEN_PREFIX + username;
+    public void saveRefreshToken(String email, String refreshToken) {
+        String key = REFRESH_TOKEN_PREFIX + email;
         Duration expiration = Duration.ofMillis(refreshTokenExpiration);
 
         stringRedisTemplate.opsForValue().set(key, refreshToken, expiration);
-        log.info("Refresh token saved for user: {}", username);
+        log.info("Refresh token saved for user: {}", email);
     }
 
     // Refresh Token 조회
-    public String getRefreshToken(String username) {
-        String key = REFRESH_TOKEN_PREFIX + username;
+    public String getRefreshToken(String email) {
+        String key = REFRESH_TOKEN_PREFIX + email;
         String token = stringRedisTemplate.opsForValue().get(key);
 
         if (token != null) {
-            log.info("Refresh token found for user: {}", username);
+            log.info("Refresh token found for user: {}", email);
         } else {
-            log.info("No refresh token found for user: {}", username);
+            log.info("No refresh token found for user: {}", email);
         }
 
         return token;
     }
 
     // Refresh Token 삭제 (로그아웃시)
-    public void deleteRefreshToken(String username) {
-        String key = REFRESH_TOKEN_PREFIX + username;
+    public void deleteRefreshToken(String email) {
+        String key = REFRESH_TOKEN_PREFIX + email;
         Boolean deleted = stringRedisTemplate.delete(key);
 
         if (Boolean.TRUE.equals(deleted)) {
-            log.info("Refresh token deleted for user: {}", username);
+            log.info("Refresh token deleted for user: {}", email);
         } else {
-            log.warn("No refresh token to delete for user: {}", username);
+            log.warn("No refresh token to delete for user: {}", email);
         }
     }
 
     // Refresh Token 존재 여부 확인
-    public boolean hasRefreshToken(String username) {
-        String key = REFRESH_TOKEN_PREFIX + username;
+    public boolean hasRefreshToken(String email) {
+        String key = REFRESH_TOKEN_PREFIX + email;
         Boolean exists = stringRedisTemplate.hasKey(key);
         return Boolean.TRUE.equals(exists);
     }
 
     // Refresh Token 유효성 검증 (Redis에 저장된 토큰과 비교)
-    public boolean validateRefreshToken(String username, String refreshToken) {
-        String storedToken = getRefreshToken(username);
+    public boolean validateRefreshToken(String email, String refreshToken) {
+        String storedToken = getRefreshToken(email);
         boolean isValid = storedToken != null && storedToken.equals(refreshToken);
 
         if (isValid) {
-            log.info("Refresh token validation successful for user: {}", username);
+            log.info("Refresh token validation successful for user: {}", email);
         } else {
-            log.warn("Refresh token validation failed for user: {}", username);
+            log.warn("Refresh token validation failed for user: {}", email);
         }
 
         return isValid;

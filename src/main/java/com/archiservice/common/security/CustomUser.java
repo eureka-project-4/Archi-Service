@@ -1,17 +1,13 @@
 package com.archiservice.common.security;
 
-import com.archiservice.auth.enums.Role;
 import com.archiservice.user.domain.User;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.math.BigInteger;
 import java.util.Collection;
 import java.util.Collections;
-
-import static com.archiservice.auth.enums.Role.ROLE_USER;
 
 @Getter
 public class CustomUser implements UserDetails {
@@ -24,7 +20,7 @@ public class CustomUser implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singletonList(new SimpleGrantedAuthority(ROLE_USER.name()));
+        return Collections.emptyList();
     }
 
     @Override
@@ -58,15 +54,11 @@ public class CustomUser implements UserDetails {
     }
 
     // User 엔터티 접근 메서드
-    public BigInteger getId() {
+    public Long getId() {
         return user.getUserId();
     }
 
     public String getEmail() {
         return user.getEmail();
-    }
-
-    public Role getRole() {
-        return ROLE_USER;
     }
 }

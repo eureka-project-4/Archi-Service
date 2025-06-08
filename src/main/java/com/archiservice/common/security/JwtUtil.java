@@ -34,7 +34,7 @@ public class JwtUtil {
     }
 
     // 토큰에서 사용자명(email) 추출
-    public String extractUsername(String token) {
+    public String extractEmail(String token) {
         return extractClaim(token, Claims::getSubject);
     }
 
@@ -83,11 +83,6 @@ public class JwtUtil {
     // Access Token 생성
     public String generateAccessToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
-        // 권한 정보를 String으로 저장
-        String role = userDetails.getAuthorities().iterator().next().getAuthority();
-        claims.put("role", role);
-
-        log.info("토큰 생성 - 사용자: {}, 권한: {}", userDetails.getUsername(), role);
 
         return createToken(claims, userDetails.getUsername(), accessTokenExpiration);
     }
@@ -112,7 +107,7 @@ public class JwtUtil {
     // 토큰 유효성 검증
     public Boolean validateToken(String token, UserDetails userDetails) {
         try {
-            final String username = extractUsername(token);
+            final String username = extractEmail(token);
             return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
         } catch (Exception e) {
             log.error("Token validation failed: {}", e.getMessage());
@@ -129,11 +124,5 @@ public class JwtUtil {
             log.error("Token validation failed: {}", e.getMessage());
             return false;
         }
-    }
-
-    // 토큰에서 권한 추출
-    public String extractRole(String token) {
-        Claims claims = extractAllClaims(token);
-        return claims.get("role", String.class);  // "role"에서 가져오기
     }
 }

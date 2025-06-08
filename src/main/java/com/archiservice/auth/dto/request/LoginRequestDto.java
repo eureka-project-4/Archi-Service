@@ -1,4 +1,4 @@
-package com.archiservice.user.dto.request;
+package com.archiservice.auth.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;

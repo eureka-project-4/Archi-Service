@@ -2,14 +2,12 @@ package com.archiservice.common.response;
 
 import com.archiservice.exception.ErrorCode;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 public class ApiResponse<T> {
 
   private int resultCode;     // 예: 200, 404, 500

@@ -32,24 +32,24 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String authorizationHeader = request.getHeader("Authorization");
 
         String token = null;
-        String username = null;
+        String email = null;
 
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             token = authorizationHeader.substring(7); // "Bearer " 제거
 
             try {
-                username = jwtUtil.extractUsername(token);
+                email = jwtUtil.extractEmail(token);
             } catch (Exception e) {
                 log.error("JWT 토큰에서 사용자명 추출 실패: {}", e.getMessage());
             }
         }
 
         // 2. 토큰이 유효하고 SecurityContext에 인증 정보가 없는 경우
-        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+        if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
             try {
                 // 3. UserDetails 로드
-                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+                UserDetails userDetails = userDetailsService.loadUserByUsername(email);
 
                 // 4. 토큰 유효성 검증
                 if (jwtUtil.validateToken(token, userDetails)) {
@@ -67,7 +67,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     // 6. SecurityContext에 인증 정보 설정
                     SecurityContextHolder.getContext().setAuthentication(authToken);
 
-                    log.debug("JWT 인증 성공: {}", username);
+                    log.debug("JWT 인증 성공: {}", email);
                 }
 
             } catch (Exception e) {
