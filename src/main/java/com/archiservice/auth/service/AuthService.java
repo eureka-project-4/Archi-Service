@@ -6,7 +6,6 @@ import com.archiservice.auth.dto.response.LogoutResponseDto;
 import com.archiservice.auth.dto.response.RefreshResponseDto;
 import com.archiservice.common.response.ApiResponse;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.http.ResponseEntity;
 
 public interface AuthService {
     ApiResponse<LoginResponseDto> login(LoginRequestDto loginRequestDto, HttpServletResponse response);

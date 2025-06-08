@@ -28,7 +28,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
 
-        // 1. Authorization 헤더에서 토큰 추출
         String authorizationHeader = request.getHeader("Authorization");
 
         String token = null;
@@ -44,17 +43,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
         }
 
-        // 2. 토큰이 유효하고 SecurityContext에 인증 정보가 없는 경우
+        // 토큰이 유효하고 SecurityContext에 인증 정보가 없는 경우
         if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
             try {
-                // 3. UserDetails 로드
                 UserDetails userDetails = userDetailsService.loadUserByUsername(email);
 
-                // 4. 토큰 유효성 검증
                 if (jwtUtil.validateToken(token, userDetails)) {
 
-                    // 5. Authentication 객체 생성
                     UsernamePasswordAuthenticationToken authToken =
                             new UsernamePasswordAuthenticationToken(
                                     userDetails,
@@ -64,7 +60,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
                     authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
-                    // 6. SecurityContext에 인증 정보 설정
                     SecurityContextHolder.getContext().setAuthentication(authToken);
 
                     log.debug("JWT 인증 성공: {}", email);
@@ -75,7 +70,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
         }
 
-        // 7. 다음 필터로 전달
         filterChain.doFilter(request, response);
     }
 }

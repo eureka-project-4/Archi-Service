@@ -20,7 +20,6 @@ public class RedisService {
 
     private static final String REFRESH_TOKEN_PREFIX = "refresh_token:";
 
-    // Refresh Token 저장
     public void saveRefreshToken(String email, String refreshToken) {
         String key = REFRESH_TOKEN_PREFIX + email;
         Duration expiration = Duration.ofMillis(refreshTokenExpiration);
@@ -29,7 +28,6 @@ public class RedisService {
         log.info("Refresh token saved for user: {}", email);
     }
 
-    // Refresh Token 조회
     public String getRefreshToken(String email) {
         String key = REFRESH_TOKEN_PREFIX + email;
         String token = stringRedisTemplate.opsForValue().get(key);
@@ -43,7 +41,6 @@ public class RedisService {
         return token;
     }
 
-    // Refresh Token 삭제 (로그아웃시)
     public void deleteRefreshToken(String email) {
         String key = REFRESH_TOKEN_PREFIX + email;
         Boolean deleted = stringRedisTemplate.delete(key);
@@ -55,14 +52,12 @@ public class RedisService {
         }
     }
 
-    // Refresh Token 존재 여부 확인
     public boolean hasRefreshToken(String email) {
         String key = REFRESH_TOKEN_PREFIX + email;
         Boolean exists = stringRedisTemplate.hasKey(key);
         return Boolean.TRUE.equals(exists);
     }
 
-    // Refresh Token 유효성 검증 (Redis에 저장된 토큰과 비교)
     public boolean validateRefreshToken(String email, String refreshToken) {
         String storedToken = getRefreshToken(email);
         boolean isValid = storedToken != null && storedToken.equals(refreshToken);
@@ -76,7 +71,6 @@ public class RedisService {
         return isValid;
     }
 
-    // 모든 Refresh Token 삭제 (관리자용)
     public void deleteAllRefreshTokens() {
         String pattern = REFRESH_TOKEN_PREFIX + "*";
         var keys = stringRedisTemplate.keys(pattern);

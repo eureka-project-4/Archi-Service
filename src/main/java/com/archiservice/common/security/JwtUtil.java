@@ -27,29 +27,24 @@ public class JwtUtil {
     @Value("${jwt.refresh-token-expiration}")
     private Long refreshTokenExpiration;
 
-    // Secret Key 생성
     private SecretKey getSigningKey() {
         byte[] keyBytes = secret.getBytes(StandardCharsets.UTF_8);
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    // 토큰에서 사용자명(email) 추출
     public String extractEmail(String token) {
         return extractClaim(token, Claims::getSubject);
     }
 
-    // 토큰에서 만료시간 추출
     public Date extractExpiration(String token) {
         return extractClaim(token, Claims::getExpiration);
     }
 
-    // 토큰에서 특정 클레임 추출
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = extractAllClaims(token);
         return claimsResolver.apply(claims);
     }
 
-    // 모든 클레임 추출
     private Claims extractAllClaims(String token) {
         try {
             return Jwts.parser()
@@ -75,25 +70,21 @@ public class JwtUtil {
         }
     }
 
-    // 토큰 만료 확인
     private Boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());
     }
 
-    // Access Token 생성
     public String generateAccessToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
 
         return createToken(claims, userDetails.getUsername(), accessTokenExpiration);
     }
 
-    // Refresh Token 생성
     public String generateRefreshToken(String username) {
         Map<String, Object> claims = new HashMap<>();
         return createToken(claims, username, refreshTokenExpiration);
     }
 
-    // 토큰 생성
     private String createToken(Map<String, Object> claims, String subject, Long expiration) {
         return Jwts.builder()
                 .claims(claims)
@@ -104,7 +95,6 @@ public class JwtUtil {
                 .compact();
     }
 
-    // 토큰 유효성 검증
     public Boolean validateToken(String token, UserDetails userDetails) {
         try {
             final String username = extractEmail(token);
@@ -115,7 +105,6 @@ public class JwtUtil {
         }
     }
 
-    // 토큰 유효성 검증 (사용자 정보 없이)
     public Boolean validateToken(String token) {
         try {
             extractAllClaims(token);
