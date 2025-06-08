@@ -53,16 +53,16 @@ public class ChatServiceImpl implements ChatService {
                 .build();
         chatRepository.save(chat);
 
-        messagingTemplate.convertAndSendToUser(
+        messagingTemplate.convertAndSendToUser( // 사용자가 보낸 메시지 보여주기 위해
                 String.valueOf(userId),
-                "/queue/chat",
+                "/queue/chat", // 구독 중인 경로
                 message
         );
 
         sendBotResponse(userId, message.getContent());
     }
 
-
+    // 챗봇 응답 -> 클라이언트
     // Open api 연결하기
     @Override
     @Async
@@ -75,7 +75,6 @@ public class ChatServiceImpl implements ChatService {
 
         String reply = "GPT 응답: \"" + userMessage;
 
-        // DB 저장
         User user = userRepository.findById(userId).orElseThrow();
         Chat chat = Chat.builder()
                 .user(user)
@@ -102,6 +101,7 @@ public class ChatServiceImpl implements ChatService {
         );
     }
 
+    @Override
     public List<ChatMessageDto> loadChatHistory(Long userId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
         Page<Chat> chatPage = chatRepository.findByUser_UserIdAndIsValidTrueOrderByCreatedAtDesc(userId, pageable);
@@ -121,6 +121,13 @@ public class ChatServiceImpl implements ChatService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public void deleteChatByUserId(Long userId) {
+        if (!userRepository.existsById(userId)) {
+            throw new BusinessException(ErrorCode.USER_NOT_FOUND);
+        }
+        chatRepository.deleteByUserId(userId);
+    }
 
 
 

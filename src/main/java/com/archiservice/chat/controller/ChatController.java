@@ -25,4 +25,11 @@ public class ChatController {
         return ResponseEntity.ok(ApiResponse.success("성공했습니다.", data));
     }
 
+    @DeleteMapping("/delete/{userId}")
+    public ResponseEntity<ApiResponse<String>> deleteChatHistory(@PathVariable("userId") Long userId) {
+        chatService.deleteChatByUserId(userId);
+        return ResponseEntity.ok(ApiResponse.success("성공했습니다.", "삭제 성공"));
+    }
+
+
 }
