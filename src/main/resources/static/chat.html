@@ -97,9 +97,9 @@
     let hasMore = true;
 
 
-
+    // 채팅 내역 초기화면
     function loadInitialMessages() {
-        fetch(`/api/chat/history/${userId}?page=${page}&size=${size}`)
+        fetch(`/api/chats/history/${userId}?page=${page}&size=${size}`)
             .then(res => res.json())
             .then(response => {
                 const messages = response.data;
@@ -112,25 +112,26 @@
             });
     }
 
-
+    // WebSocket 연결
     function connect() {
         const socket = new SockJS("/ws");
         stompClient = Stomp.over(socket);
         stompClient.connect({}, function (frame) {
             stompClient.subscribe("/user/queue/chat", function (message) {
                 const msg = JSON.parse(message.body);
-                chatMessages.push({ sender: msg.sender, content: msg.content }); // 최신 메시지 아래로
+                chatMessages.push({ sender: msg.sender, content: msg.content }); // 메시지 받을때마다 push
                 showMessage(msg.sender, msg.content);
             });
         });
     }
 
-
+    // 클라이언트 -> 서버로 메시지 전송
     function sendMessage() {
         const input = document.getElementById("messageInput");
         const content = input.value.trim();
         if (!content || !stompClient) return;
 
+        // ChatMessageDto
         const message = {
             type: "CHAT",
             sender: userId,
@@ -138,7 +139,7 @@
             content: content
         };
 
-        stompClient.send("/app/chat/sendMessage", {}, JSON.stringify(message));
+        stompClient.send("/app/chat/sendMessage", {}, JSON.stringify(message)); // 서버로 메시지 전송
         input.value = "";
     }
 
@@ -171,7 +172,7 @@
 
     function loadMoreMessages() {
         isLoading = true;
-        fetch(`/api/chat/history/${userId}?page=${page}&size=${size}`)
+        fetch(`/api/chats/history/${userId}?page=${page}&size=${size}`)
             .then(res => res.json())
             .then(response => {
                 const messages = response.data;
@@ -195,7 +196,7 @@
     document.getElementById("messages").addEventListener("scroll", function () {
         const top = this.scrollTop;
         if (top === 0 && !isLoading && hasMore) {
-            loadMoreMessages();
+            loadMoreMessages(); // 스크롤 위로 올리면 30개 추가 조회
         }
     });
 
