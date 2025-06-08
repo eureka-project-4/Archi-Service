@@ -87,12 +87,22 @@ public class ChatServiceImpl implements ChatService {
         chatRepository.save(chat);
 
         // 클라이언트 전송용 DTO
+//        ChatMessageDto responseDto = ChatMessageDto.builder()
+//                .type(MessageType.TEXT)
+//                .sender("gpt-bot")
+//                .roomId(String.valueOf(userId))
+//                .content(reply)
+//                .build();
+
         ChatMessageDto responseDto = ChatMessageDto.builder()
-                .type(MessageType.CHAT)
+                .type(MessageType.SUGGESTION)
                 .sender("gpt-bot")
                 .roomId(String.valueOf(userId))
-                .content(reply)
+                .content("다음 중 어떤 항목이 궁금하신가요?")
+                .options(List.of("갤럭시 S25", "로밍이용방법"))  // 버튼 텍스트 목록
                 .build();
+
+
 
         messagingTemplate.convertAndSendToUser(
                 String.valueOf(userId), // 사용자 ID
@@ -113,7 +123,7 @@ public class ChatServiceImpl implements ChatService {
 
         return chats.stream()
                 .map(chat -> ChatMessageDto.builder()
-                        .type(MessageType.CHAT)
+                        .type(MessageType.TEXT)
                         .sender(chat.getSender().name().toLowerCase())
                         .roomId(String.valueOf(userId))
                         .content(chat.getMessage())
@@ -126,7 +136,7 @@ public class ChatServiceImpl implements ChatService {
         if (!userRepository.existsById(userId)) {
             throw new BusinessException(ErrorCode.USER_NOT_FOUND);
         }
-        chatRepository.deleteByUserId(userId);
+        chatRepository.deleteByUser_UserId(userId);
     }
 
 
