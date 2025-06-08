@@ -85,6 +85,28 @@
         .option-button:hover {
             background-color: #e5e7eb;
         }
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start; /* 기본값, 왼쪽 정렬 (bot 기준) */
+        }
+
+        .chat-container.user {
+            justify-content: flex-end; /* 사용자 메시지일 경우 오른쪽 정렬 */
+        }
+
+        .options-container {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 8px;
+            justify-content: flex-start; /* 기본값, 왼쪽 정렬 */
+        }
+
+        .options-container.user {
+            justify-content: flex-end; /* 사용자 메시지일 경우 오른쪽 정렬 */
+        }
+
 
     </style>
 </head>
@@ -194,7 +216,7 @@
 
     function showMessage(sender, content, type = "TEXT", options = []) {
         const messagesDiv = document.getElementById("messages");
-        const isUser = sender === "user" || String(sender) === String(userId); // 통일된 판별
+        const isUser = sender === "user" || String(sender) === String(userId);
 
         // 말풍선 메시지 생성
         const newMsg = document.createElement("div");
@@ -203,35 +225,31 @@
 
         // 메시지와 옵션을 묶을 컨테이너
         const container = document.createElement("div");
-        container.style.display = "flex";
-        container.style.flexDirection = "column";
-        container.style.justifyContent = isUser ? "flex-end" : "flex-start";
+        container.classList.add("chat-container");
+        if (isUser) container.classList.add("user"); // 사용자일 경우 오른쪽 정렬
         container.appendChild(newMsg);
 
         // 옵션 버튼 렌더링 (SUGGESTION일 경우)
         if (type === "SUGGESTION" && Array.isArray(options) && options.length > 0) {
             const optionsDiv = document.createElement("div");
-            optionsDiv.style.display = "flex";
-            optionsDiv.style.gap = "8px";
-            optionsDiv.style.flexWrap = "wrap";
-            optionsDiv.style.marginTop = "8px";
-            optionsDiv.style.justifyContent = isUser ? "flex-end" : "flex-start"; // 정렬 맞추기
+            optionsDiv.classList.add("options-container");
+            if (isUser) optionsDiv.classList.add("user"); // 사용자 옵션이면 오른쪽 정렬
 
             options.forEach(option => {
                 const btn = document.createElement("button");
                 btn.textContent = option;
                 btn.className = "option-button";
-                btn.onclick = () => sendMessage(option); // 버튼 클릭 시 전송
+                btn.onclick = () => sendMessage(option);
                 optionsDiv.appendChild(btn);
             });
 
             container.appendChild(optionsDiv);
         }
 
-
         messagesDiv.appendChild(container);
         messagesDiv.scrollTop = messagesDiv.scrollHeight;
     }
+
 
 
 
