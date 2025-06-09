@@ -19,6 +19,9 @@ public class User {
     private String username;
     private String password;
     private String email;
+    private String number;
+    private String birth;
+    private String gender;
 
     @CreatedDate
     private LocalDateTime createdAt;
