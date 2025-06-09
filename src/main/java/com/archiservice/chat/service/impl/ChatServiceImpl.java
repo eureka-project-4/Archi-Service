@@ -2,6 +2,7 @@ package com.archiservice.chat.service.impl;
 
 import com.archiservice.chat.domain.Chat;
 import com.archiservice.chat.dto.MessageType;
+import com.archiservice.chat.dto.Sender;
 import com.archiservice.chat.dto.response.ChatMessageDto;
 
 import com.archiservice.chat.repository.ChatRepository;
@@ -47,14 +48,16 @@ public class ChatServiceImpl implements ChatService {
 
     @Override
     public void handleUserMessage(ChatMessageDto message, User user) {
+
         Chat chat = Chat.builder()
                 .user(user)
-                .sender(Chat.Sender.USER)
+                .sender(Sender.USER)
                 .message(message.getContent())
                 .isValid(true)
                 .isRecommend(false)
                 .createdAt(LocalDateTime.now())
                 .build();
+
         chatRepository.save(chat);
         messagingTemplate.convertAndSendToUser(
                 user.getEmail(),
@@ -77,11 +80,11 @@ public class ChatServiceImpl implements ChatService {
             Thread.currentThread().interrupt();
         }
 
-        String reply = "GPT 응답: \"" + userMessage;
+        String reply = "GPT 응답: \"" + userMessage + " \"";
 
         Chat chat = Chat.builder()
                 .user(user)
-                .sender(Chat.Sender.BOT)
+                .sender(Sender.BOT)
                 .message(reply)
                 .isValid(true)
                 .isRecommend(false)
@@ -116,7 +119,7 @@ public class ChatServiceImpl implements ChatService {
     @Override
     public List<ChatMessageDto> loadChatHistory(Long userId, int page, int size) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
         Page<Chat> chatPage = chatRepository.findByUserAndIsValidTrueOrderByCreatedAtDesc(user, pageable);
@@ -163,7 +166,7 @@ public class ChatServiceImpl implements ChatService {
 
     public List<ChatMessageDto> fetchLatestChatFromDB(Long userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
         Pageable pageable = PageRequest.of(0, 30, Sort.by("createdAt").descending());
         Page<Chat> chatPage = chatRepository.findByUserAndIsValidTrueOrderByCreatedAtDesc(user, pageable);
