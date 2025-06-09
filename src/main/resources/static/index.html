@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>로그인</title>
+</head>
+<body>
+<h2>로그인</h2>
+<form id="loginForm">
+    <div>
+        <label>이메일:</label>
+        <input type="email" id="email" required>
+    </div>
+    <div>
+        <label>비밀번호:</label>
+        <input type="password" id="password" required>
+    </div>
+    <button type="submit">로그인</button>
+</form>
+<button onclick="location.href='join.html'">회원가입</button>
+<div id="message"></div>
+<script>
+    document.getElementById('loginForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const email = document.getElementById('email').value;  // ← email id로 수정
+        const password = document.getElementById('password').value;
+        try {
+            const response = await fetch('/api/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            });
+            const data = await response.json();
+            if (data.codeName === 'SUCCESS') {  // ← result → codeName 수정
+                console.log(data);
+                localStorage.setItem('accessToken', data.data.accessToken);
+                // localStorage.setItem('refreshToken', data.data.refreshToken);  // ← 제거 (쿠키로 관리)
+                localStorage.setItem('username', data.data.email);
+                alert('로그인 성공!');
+                window.location.href = 'chat.html';
+            } else {
+                alert('로그인 실패: ' + data.message);
+            }
+        } catch (error) {
+            alert('로그인 오류');
+        }
+    });
+</script>
+</body>
+</html>
