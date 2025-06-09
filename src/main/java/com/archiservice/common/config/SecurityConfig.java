@@ -1,8 +1,8 @@
 package com.archiservice.common.config;
 
 import com.archiservice.common.security.CustomUserDetailsService;
-import com.archiservice.common.security.JwtAuthenticationFilter;
-import com.archiservice.common.security.JwtUtil;
+import com.archiservice.common.jwt.JwtAuthenticationFilter;
+import com.archiservice.common.jwt.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -33,6 +33,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/","/index.html","/chat.html","/ws/**").permitAll()
                         .requestMatchers("/api/auth/login","/api/auth/refresh", "/api/users/signup").permitAll()
                         .anyRequest().authenticated()
                 )
