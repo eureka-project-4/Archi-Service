@@ -16,7 +16,7 @@ public class ApiResponse<T> {
   private T data;             // 성공 시 반환할 데이터
 
   public static <T> ApiResponse<T> success(String message, T data) {
-    return new ApiResponse<>(200, "SUCCESS", message, data);
+    return new ApiResponse<>(200,"SUCCESS", message, data);
   }
 
   public static <T> ApiResponse<T> success(T data) {
