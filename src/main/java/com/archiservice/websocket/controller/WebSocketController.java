@@ -16,10 +16,10 @@ public class WebSocketController {
 
     private final ChatService chatService;
 
+    // prefix ( "/app" )
     @MessageMapping("/chat/sendMessage")
     public void sendMessage(@Payload ChatMessageDto message , Principal principal) {
         Long userId = Long.valueOf(principal.getName());
         chatService.handleUserMessage(message, userId);
     }
-
 }

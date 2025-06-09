@@ -53,16 +53,16 @@ public class ChatServiceImpl implements ChatService {
                 .build();
         chatRepository.save(chat);
 
-        messagingTemplate.convertAndSendToUser(
+        messagingTemplate.convertAndSendToUser( // 사용자가 보낸 메시지 보여주기 위해
                 String.valueOf(userId),
-                "/queue/chat",
+                "/queue/chat", // 구독 중인 경로
                 message
         );
 
         sendBotResponse(userId, message.getContent());
     }
 
-
+    // 챗봇 응답 -> 클라이언트
     // Open api 연결하기
     @Override
     @Async
@@ -75,7 +75,6 @@ public class ChatServiceImpl implements ChatService {
 
         String reply = "GPT 응답: \"" + userMessage;
 
-        // DB 저장
         User user = userRepository.findById(userId).orElseThrow();
         Chat chat = Chat.builder()
                 .user(user)
@@ -88,12 +87,22 @@ public class ChatServiceImpl implements ChatService {
         chatRepository.save(chat);
 
         // 클라이언트 전송용 DTO
+//        ChatMessageDto responseDto = ChatMessageDto.builder()
+//                .type(MessageType.TEXT)
+//                .sender("gpt-bot")
+//                .roomId(String.valueOf(userId))
+//                .content(reply)
+//                .build();
+
         ChatMessageDto responseDto = ChatMessageDto.builder()
-                .type(MessageType.CHAT)
+                .type(MessageType.SUGGESTION)
                 .sender("gpt-bot")
                 .roomId(String.valueOf(userId))
-                .content(reply)
+                .content("다음 중 어떤 항목이 궁금하신가요?")
+                .options(List.of("갤럭시 S25", "로밍이용방법"))  // 버튼 텍스트 목록
                 .build();
+
+
 
         messagingTemplate.convertAndSendToUser(
                 String.valueOf(userId), // 사용자 ID
@@ -102,6 +111,7 @@ public class ChatServiceImpl implements ChatService {
         );
     }
 
+    @Override
     public List<ChatMessageDto> loadChatHistory(Long userId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
         Page<Chat> chatPage = chatRepository.findByUser_UserIdAndIsValidTrueOrderByCreatedAtDesc(userId, pageable);
@@ -113,7 +123,7 @@ public class ChatServiceImpl implements ChatService {
 
         return chats.stream()
                 .map(chat -> ChatMessageDto.builder()
-                        .type(MessageType.CHAT)
+                        .type(MessageType.TEXT)
                         .sender(chat.getSender().name().toLowerCase())
                         .roomId(String.valueOf(userId))
                         .content(chat.getMessage())
@@ -121,6 +131,13 @@ public class ChatServiceImpl implements ChatService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public void deleteChatByUserId(Long userId) {
+        if (!userRepository.existsById(userId)) {
+            throw new BusinessException(ErrorCode.USER_NOT_FOUND);
+        }
+        chatRepository.deleteByUser_UserId(userId);
+    }
 
 
 
