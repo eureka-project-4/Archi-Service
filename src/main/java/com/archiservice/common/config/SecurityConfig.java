@@ -24,7 +24,7 @@ public class SecurityConfig {
 
     private final String[] WHITE_LIST = {
             "/auth/login","/auth/refresh", "/users/signup",
-            "/plans/**"
+            "/plans/**", "/vass/**", "/coupons/**"
     };
 
     @Bean
