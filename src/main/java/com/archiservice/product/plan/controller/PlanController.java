@@ -15,7 +15,7 @@ import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/api/plans")
+@RequestMapping("/plans")
 public class PlanController {
     private final PlanService planService;
 
