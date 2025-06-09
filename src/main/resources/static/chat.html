@@ -21,10 +21,14 @@
             background: white;
         }
         .chat-header {
-            background: #eef6ff;
-            padding: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            background-color: #eaf2fb;
             font-weight: bold;
-            color: #1e40af;
+            font-size: 16px;
+            color: #1a237e;
             border-bottom: 1px solid #ccc;
         }
         .chat-messages {
@@ -107,12 +111,26 @@
             justify-content: flex-end; /* 사용자 메시지일 경우 오른쪽 정렬 */
         }
 
+        .delete-button {
+            background-color: #ef4444; /* 빨간색 */
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            cursor: pointer;
+            margin-left: auto; /* 오른쪽으로 최대한 붙이기 */
+        }
+
 
     </style>
 </head>
 <body>
 <div class="chat-wrapper">
-    <div class="chat-header">통신 서비스 추천 챗봇</div>
+    <div class="chat-header">
+        <span>통신 서비스 추천 챗봇</span>
+        <button class="delete-button" onclick="deleteChatHistory()">채팅 기록 삭제</button>
+    </div>
 
     <!-- 로그인 안내 -->
     <div id="loginPrompt" style="flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center;">
@@ -130,6 +148,7 @@
     </div>
 </div>
 
+
 <script>
     let stompClient = null;
     let page = 0;
@@ -138,7 +157,6 @@
     let hasMore = true;
     let accessToken = null;
     let chatMessages = [];
-    const currentUserId = localStorage.getItem("userId");
 
     function handleLogin() {
         window.location.href = "/index.html"; // 로그인 페이지 이동
@@ -298,6 +316,28 @@
             loadMoreMessages();
         }
     });
+
+    function deleteChatHistory() {
+        if (!confirm("정말로 채팅 기록을 삭제하시겠습니까?")) return;
+
+        fetch(`/chats/deleteAll`, {
+            method: "DELETE",
+            headers: {
+                "Authorization": `Bearer ${accessToken}`
+            }
+        }).then(response => response.json())
+            .then(result => {
+                if (result.codeName === "SUCCESS") {
+                    document.getElementById("messages").innerHTML = "";
+                    alert("채팅 기록이 삭제되었습니다.");
+                } else {
+                    alert("삭제 실패: " + result.message);
+                }
+            });
+    }
+
+
+
 </script>
 
 </body>
