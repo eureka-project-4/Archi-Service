@@ -87,20 +87,20 @@ public class ChatServiceImpl implements ChatService {
         chatRepository.save(chat);
 
         // 클라이언트 전송용 DTO
-//        ChatMessageDto responseDto = ChatMessageDto.builder()
-//                .type(MessageType.TEXT)
-//                .sender("gpt-bot")
-//                .roomId(String.valueOf(userId))
-//                .content(reply)
-//                .build();
-
         ChatMessageDto responseDto = ChatMessageDto.builder()
-                .type(MessageType.SUGGESTION)
+                .type(MessageType.TEXT)
                 .sender("gpt-bot")
                 .roomId(String.valueOf(userId))
-                .content("다음 중 어떤 항목이 궁금하신가요?")
-                .options(List.of("갤럭시 S25", "로밍이용방법"))  // 버튼 텍스트 목록
+                .content(reply)
                 .build();
+
+//        ChatMessageDto responseDto = ChatMessageDto.builder()
+//                .type(MessageType.SUGGESTION)
+//                .sender("gpt-bot")
+//                .roomId(String.valueOf(userId))
+//                .content("다음 중 어떤 항목이 궁금하신가요?")
+//                .options(List.of("갤럭시 S25", "로밍이용방법"))  // 버튼 텍스트 목록
+//                .build();
 
 
 
