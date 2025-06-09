@@ -23,8 +23,8 @@ public class SecurityConfig {
     private final CustomUserDetailsService customUserDetailsService;
 
     private final String[] WHITE_LIST = {
-            "/api/auth/login","/api/auth/refresh", "/api/users/signup",
-            "/api/plans/**"
+            "/auth/login","/auth/refresh", "/users/signup",
+            "/plans/**"
     };
 
     @Bean
