@@ -5,12 +5,14 @@ import com.archiservice.code.tagmeta.repository.TagMetaRepository;
 import com.archiservice.code.tagmeta.service.TagMetaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class TagMetaServiceImpl implements TagMetaService {
     private final TagMetaRepository tagMetaRepository;
 

@@ -1,7 +1,7 @@
 package com.archiservice.code.tagmeta.domain;
 
 import com.archiservice.common.TimeStamp;
-import com.archiservice.code.tagmeta.domain.key.TagMetaId;
+import com.archiservice.code.tagmeta.domain.id.TagMetaId;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
