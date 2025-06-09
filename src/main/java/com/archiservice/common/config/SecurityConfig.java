@@ -22,6 +22,11 @@ public class SecurityConfig {
     private final JwtUtil jwtUtil;
     private final CustomUserDetailsService customUserDetailsService;
 
+    private final String[] WHITE_LIST = {
+            "/api/auth/login","/api/auth/refresh", "/api/users/signup",
+            "/api/plans/**"
+    };
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -33,7 +38,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/login","/api/auth/refresh", "/api/users/signup").permitAll()
+                        .requestMatchers(WHITE_LIST).permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(new JwtAuthenticationFilter(jwtUtil, customUserDetailsService), UsernamePasswordAuthenticationFilter.class);

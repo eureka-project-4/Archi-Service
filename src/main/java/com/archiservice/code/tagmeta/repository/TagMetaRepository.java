@@ -1,7 +1,7 @@
-package com.archiservice.tagmeta.repository;
+package com.archiservice.code.tagmeta.repository;
 
-import com.archiservice.tagmeta.domain.TagMeta;
-import com.archiservice.tagmeta.domain.key.TagMetaId;
+import com.archiservice.code.tagmeta.domain.TagMeta;
+import com.archiservice.code.tagmeta.domain.key.TagMetaId;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

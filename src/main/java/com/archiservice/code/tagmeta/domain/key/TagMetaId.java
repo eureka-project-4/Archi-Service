@@ -1,4 +1,4 @@
-package com.archiservice.tagmeta.domain.key;
+package com.archiservice.code.tagmeta.domain.key;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;

@@ -1,8 +1,8 @@
-package com.archiservice.tagmeta.service.impl;
+package com.archiservice.code.tagmeta.service.impl;
 
-import com.archiservice.tagmeta.domain.TagMeta;
-import com.archiservice.tagmeta.repository.TagMetaRepository;
-import com.archiservice.tagmeta.service.TagMetaService;
+import com.archiservice.code.tagmeta.domain.TagMeta;
+import com.archiservice.code.tagmeta.repository.TagMetaRepository;
+import com.archiservice.code.tagmeta.service.TagMetaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

@@ -7,8 +7,7 @@ import com.archiservice.product.plan.dto.response.PlanDetailResponseDto;
 import com.archiservice.product.plan.dto.response.PlanResponseDto;
 import com.archiservice.product.plan.repository.PlanRepository;
 import com.archiservice.product.plan.service.PlanService;
-import com.archiservice.tagmeta.service.TagMetaService;
-import com.archiservice.tagmeta.service.impl.TagMetaServiceImpl;
+import com.archiservice.code.tagmeta.service.TagMetaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
