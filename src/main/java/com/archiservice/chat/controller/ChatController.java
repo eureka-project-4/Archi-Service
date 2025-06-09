@@ -11,7 +11,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/chat")
+@RequestMapping("/api/chats")
 public class ChatController {
 
     private final ChatService chatService;
@@ -24,5 +24,12 @@ public class ChatController {
         List<ChatMessageDto> data = chatService.loadChatHistory(userId, page, size);
         return ResponseEntity.ok(ApiResponse.success("성공했습니다.", data));
     }
+
+    @DeleteMapping("/delete/{userId}")
+    public ResponseEntity<ApiResponse<String>> deleteChatHistory(@PathVariable("userId") Long userId) {
+        chatService.deleteChatByUserId(userId);
+        return ResponseEntity.ok(ApiResponse.success("성공했습니다.", "삭제 성공"));
+    }
+
 
 }

@@ -12,5 +12,6 @@ public interface ChatRepository extends JpaRepository<Chat, Long> {
 
     Page<Chat> findByUser_UserIdAndIsValidTrueOrderByCreatedAtDesc(Long userId, Pageable pageable);
 
+    void deleteByUser_UserId(Long userId);
 
 }

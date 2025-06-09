@@ -74,19 +74,40 @@
             border-radius: 20px;
             cursor: pointer;
         }
+        .option-button {
+            padding: 6px 12px;
+            font-size: 13px;
+            border: 1px solid #d1d5db;
+            background-color: #f3f4f6;
+            border-radius: 16px;
+            cursor: pointer;
+        }
+        .option-button:hover {
+            background-color: #e5e7eb;
+        }
+
     </style>
 </head>
 <body>
 <div class="chat-wrapper">
     <div class="chat-header">통신 서비스 추천 챗봇</div>
 
-    <div class="chat-messages" id="messages"></div>
+    <!-- 로그인 안내 -->
+    <div id="loginPrompt" style="flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+        <p style="font-size: 16px; color: #374151; margin-bottom: 16px;">로그인 후 챗봇을 이용할 수 있습니다.</p>
+        <button onclick="handleLogin()" style="padding: 10px 20px; background-color: #2563eb; color: white; border: none; border-radius: 20px; font-size: 14px; cursor: pointer;">로그인하기</button>
+    </div>
 
-    <div class="chat-input">
+    <!-- 채팅 메시지 영역 (초기에는 숨김) -->
+    <div class="chat-messages" id="messages" style="display: none;"></div>
+
+    <!-- 입력창 (초기에는 숨김) -->
+    <div class="chat-input" id="chatInput" style="display: none;">
         <input type="text" id="messageInput" placeholder="메시지를 입력하세요..." />
         <button onclick="sendMessage()">➤</button>
     </div>
 </div>
+
 
 <script>
     let stompClient = null;
@@ -95,11 +116,22 @@
     const size = 30;
     let isLoading = false;
     let hasMore = true;
+    let chatMessages = [];
+
+    function handleLogin() {
+        // UI 전환
+        document.getElementById('loginPrompt').style.display = 'none';
+        document.getElementById('messages').style.display = 'flex';
+        document.getElementById('chatInput').style.display = 'flex';
+
+        // 메시지 초기 로딩
+        loadInitialMessages();
+    }
 
 
-
+    // 채팅 내역 초기화면
     function loadInitialMessages() {
-        fetch(`/api/chat/history/${userId}?page=${page}&size=${size}`)
+        fetch(`/api/chats/history/${userId}?page=${page}&size=${size}`)
             .then(res => res.json())
             .then(response => {
                 const messages = response.data;
@@ -112,66 +144,101 @@
             });
     }
 
-
+    // WebSocket 연결
     function connect() {
         const socket = new SockJS("/ws");
         stompClient = Stomp.over(socket);
         stompClient.connect({}, function (frame) {
             stompClient.subscribe("/user/queue/chat", function (message) {
                 const msg = JSON.parse(message.body);
-                chatMessages.push({ sender: msg.sender, content: msg.content }); // 최신 메시지 아래로
-                showMessage(msg.sender, msg.content);
+                chatMessages.push({
+                    sender: msg.sender,
+                    content: msg.content,
+                    type: msg.type,
+                    options: msg.options
+                });
+                showMessage(msg.sender, msg.content, msg.type, msg.options);
             });
         });
     }
 
-
+    // 클라이언트 -> 서버로 메시지 전송
     function sendMessage() {
         const input = document.getElementById("messageInput");
         const content = input.value.trim();
         if (!content || !stompClient) return;
 
+        // ChatMessageDto
         const message = {
-            type: "CHAT",
-            sender: userId,
+            type: "TEXT",
+            sender: "user",
             roomId: userId,
             content: content
         };
 
-        stompClient.send("/app/chat/sendMessage", {}, JSON.stringify(message));
+        stompClient.send("/app/chat/sendMessage", {}, JSON.stringify(message)); // 서버로 메시지 전송
         input.value = "";
     }
-
-    let chatMessages = [];
 
     function redrawMessages() {
         const messagesDiv = document.getElementById("messages");
         messagesDiv.innerHTML = ""; // 초기화
 
         chatMessages.forEach(msg => {
-            const newMsg = document.createElement("div");
-            const isUser = msg.sender === "user" || msg.sender === userId;
-            newMsg.className = "chat-message " + (isUser ? "user-message" : "bot-message");
-            newMsg.textContent = msg.content;
-            messagesDiv.appendChild(newMsg);
+            // 모든 속성 넘겨서 showMessage로 출력
+            showMessage(msg.sender, msg.content, msg.type, msg.options);
         });
 
         messagesDiv.scrollTop = messagesDiv.scrollHeight;
     }
 
-    function showMessage(sender, content) {
+    function showMessage(sender, content, type = "TEXT", options = []) {
         const messagesDiv = document.getElementById("messages");
+        const isUser = sender === "user" || String(sender) === String(userId); // 통일된 판별
+
+        // 말풍선 메시지 생성
         const newMsg = document.createElement("div");
-        const isUser = sender === "user" || sender === userId;
         newMsg.className = "chat-message " + (isUser ? "user-message" : "bot-message");
         newMsg.textContent = content;
-        messagesDiv.appendChild(newMsg);
+
+        // 메시지와 옵션을 묶을 컨테이너
+        const container = document.createElement("div");
+        container.style.display = "flex";
+        container.style.flexDirection = "column";
+        container.style.justifyContent = isUser ? "flex-end" : "flex-start";
+        container.appendChild(newMsg);
+
+        // 옵션 버튼 렌더링 (SUGGESTION일 경우)
+        if (type === "SUGGESTION" && Array.isArray(options) && options.length > 0) {
+            const optionsDiv = document.createElement("div");
+            optionsDiv.style.display = "flex";
+            optionsDiv.style.gap = "8px";
+            optionsDiv.style.flexWrap = "wrap";
+            optionsDiv.style.marginTop = "8px";
+            optionsDiv.style.justifyContent = isUser ? "flex-end" : "flex-start"; // 정렬 맞추기
+
+            options.forEach(option => {
+                const btn = document.createElement("button");
+                btn.textContent = option;
+                btn.className = "option-button";
+                btn.onclick = () => sendMessage(option); // 버튼 클릭 시 전송
+                optionsDiv.appendChild(btn);
+            });
+
+            container.appendChild(optionsDiv);
+        }
+
+
+        messagesDiv.appendChild(container);
         messagesDiv.scrollTop = messagesDiv.scrollHeight;
     }
 
+
+
+
     function loadMoreMessages() {
         isLoading = true;
-        fetch(`/api/chat/history/${userId}?page=${page}&size=${size}`)
+        fetch(`/api/chats/history/${userId}?page=${page}&size=${size}`)
             .then(res => res.json())
             .then(response => {
                 const messages = response.data;
@@ -195,7 +262,7 @@
     document.getElementById("messages").addEventListener("scroll", function () {
         const top = this.scrollTop;
         if (top === 0 && !isLoading && hasMore) {
-            loadMoreMessages();
+            loadMoreMessages(); // 스크롤 위로 올리면 30개 추가 조회
         }
     });
 
