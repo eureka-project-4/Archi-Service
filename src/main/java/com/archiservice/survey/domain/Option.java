@@ -18,9 +18,9 @@ public class Option {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long surveyOptionId;
 	
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "survey_question_id")
-	private Long surveyQuestionId;
+	private Question surveyQuestion;
 	
 	private String optionText;
 	private Long testCode;
