@@ -14,7 +14,6 @@ import com.archiservice.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.Cacheable;
@@ -23,7 +22,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -43,8 +41,8 @@ public class ChatServiceImpl implements ChatService {
     private final UserRepository userRepository;
     private final SimpMessagingTemplate messagingTemplate;
 
-    @Qualifier("chatCacheManager")
-    private final CacheManager chatCacheManager;
+
+    private final CacheManager cacheManager;
 
     @Override
     public void handleUserMessage(ChatMessageDto message, User user) {
@@ -72,7 +70,6 @@ public class ChatServiceImpl implements ChatService {
     // 챗봇 응답 -> 클라이언트
     // Open api 연결하기
     @Override
-    @Async
     public void sendBotResponse(User user, String userMessage) {
         try {
             TimeUnit.SECONDS.sleep(1);
@@ -80,7 +77,7 @@ public class ChatServiceImpl implements ChatService {
             Thread.currentThread().interrupt();
         }
 
-        String reply = "GPT 응답: \"" + userMessage + " \"";
+        String reply = "GPT 응답: \"" + userMessage + "\"";
 
         Chat chat = Chat.builder()
                 .user(user)
@@ -156,7 +153,7 @@ public class ChatServiceImpl implements ChatService {
 
         List<ChatMessageDto> latest = fetchLatestChatFromDB(userId);
 
-        Cache cache = chatCacheManager.getCache("chatHistory");
+        Cache cache = cacheManager.getCache("chatHistory");
         if (cache != null) {
             String key = userId + ":0:30";
             cache.put(key, latest);
@@ -183,7 +180,6 @@ public class ChatServiceImpl implements ChatService {
                         .build())
                 .collect(Collectors.toList());
     }
-
 
 
 }
