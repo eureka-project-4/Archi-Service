@@ -117,21 +117,7 @@ public class ChatServiceImpl implements ChatService {
     public List<ChatMessageDto> loadChatHistory(Long userId, int page, int size) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
-
-        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
-        Page<Chat> chatPage = chatRepository.findByUserAndIsValidTrueOrderByCreatedAtDesc(user, pageable);
-
-        List<Chat> chats = new ArrayList<>(chatPage.getContent());
-        chats.sort(Comparator.comparing(Chat::getCreatedAt));
-
-        return chats.stream()
-                .map(chat -> ChatMessageDto.builder()
-                        .type(MessageType.TEXT)
-                        .sender(chat.getSender().name().toLowerCase())
-                        .roomId(String.valueOf(user.getUserId()))
-                        .content(chat.getMessage())
-                        .build())
-                .collect(Collectors.toList());
+        return fetchChatFromDB(user, page, size);
     }
 
 
@@ -146,12 +132,10 @@ public class ChatServiceImpl implements ChatService {
 
     // 캐시 갱신
     public void updateChatHistoryCache(Long userId) {
-        if (userId == null) {
-            log.warn("userId가 null");
-            return;
-        }
 
-        List<ChatMessageDto> latest = fetchLatestChatFromDB(userId);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+        List<ChatMessageDto> latest = fetchChatFromDB(user, 0, 30);
 
         Cache cache = cacheManager.getCache("chatHistory");
         if (cache != null) {
@@ -161,11 +145,9 @@ public class ChatServiceImpl implements ChatService {
         }
     }
 
-    public List<ChatMessageDto> fetchLatestChatFromDB(Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
-        Pageable pageable = PageRequest.of(0, 30, Sort.by("createdAt").descending());
+    private List<ChatMessageDto> fetchChatFromDB(User user, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
         Page<Chat> chatPage = chatRepository.findByUserAndIsValidTrueOrderByCreatedAtDesc(user, pageable);
 
         List<Chat> chats = new ArrayList<>(chatPage.getContent());
@@ -175,11 +157,12 @@ public class ChatServiceImpl implements ChatService {
                 .map(chat -> ChatMessageDto.builder()
                         .type(MessageType.TEXT)
                         .sender(chat.getSender().name().toLowerCase())
-                        .roomId(String.valueOf(userId))
+                        .roomId(String.valueOf(user.getUserId()))
                         .content(chat.getMessage())
                         .build())
                 .collect(Collectors.toList());
     }
+
 
 
 }
