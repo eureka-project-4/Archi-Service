@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface PlanService {
     List<PlanResponseDto> getAllPlans();
-    PlanDetailResponseDto getPlanDetail(Long id);
+    PlanDetailResponseDto getPlanDetail(Long planId);
 }
