@@ -31,14 +31,7 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(customUser.getId())
                 .orElseThrow(() -> new UserNotFoundException("올바른 사용자 정보를 가져오지 못했습니다."));
 
-        ProfileResponseDto profileResponseDto = ProfileResponseDto.builder()
-                .username(user.getUsername())
-                .email(user.getEmail())
-                .createdAt(user.getCreatedAt())
-                .number(user.getNumber())
-                .birth(user.getBirth())
-                .gender(user.getGender())
-                .build();
+        ProfileResponseDto profileResponseDto = ProfileResponseDto.from(user);
 
         return ApiResponse.success(profileResponseDto);
     }
