@@ -1,5 +1,7 @@
 package com.archiservice.chat.domain;
 
+import com.archiservice.chat.dto.MessageType;
+import com.archiservice.chat.dto.Sender;
 import com.archiservice.user.domain.User;
 import jakarta.persistence.*;
 import lombok.*;
@@ -40,14 +42,19 @@ public class Chat {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-    public enum Sender {
-        USER, BOT
-    }
+    @Enumerated(EnumType.STRING)
+    @Column(name = "message_type", nullable = false)
+    private MessageType messageType;
+
+    @Column(columnDefinition = "JSON")
+    private String options;
+
 
     @PrePersist
     public void prePersist() {
         this.createdAt = LocalDateTime.now();
         if (this.isValid == null) this.isValid = true;
         if (this.isRecommend == null) this.isRecommend = false;
+        if (this.messageType == null) this.messageType = MessageType.TEXT;
     }
 }
