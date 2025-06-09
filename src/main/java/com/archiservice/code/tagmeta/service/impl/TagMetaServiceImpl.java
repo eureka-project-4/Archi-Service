@@ -3,6 +3,7 @@ package com.archiservice.code.tagmeta.service.impl;
 import com.archiservice.code.tagmeta.domain.TagMeta;
 import com.archiservice.code.tagmeta.repository.TagMetaRepository;
 import com.archiservice.code.tagmeta.service.TagMetaService;
+import io.jsonwebtoken.lang.Collections;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,13 +20,13 @@ public class TagMetaServiceImpl implements TagMetaService {
     @Override
     public List<String> extractTagsFromCode(Long tagCode) {
         if (tagCode == null || tagCode == 0) {
-            return new ArrayList<>();
+            return Collections.emptyList();
         }
 
         List<Integer> activeBitPositions = getActiveBitPositions(tagCode);
 
         if (activeBitPositions.isEmpty()) {
-            return new ArrayList<>();
+            return Collections.emptyList();
         }
 
         List<TagMeta> tagMetas = tagMetaRepository.findByBitPositionIn(activeBitPositions);
