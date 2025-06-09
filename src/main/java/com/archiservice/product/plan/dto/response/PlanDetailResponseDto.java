@@ -15,16 +15,12 @@ public class PlanDetailResponseDto {
     private String callUsage;
     private String messageUsage;
     private String benefit;
-
-    /*
-    TODO: category, targetAge 는 공통코드에서 가져와 문자로 변환
-     */
     private List<String> tags;
     private String category;
-    private String targetAge; // 가입 대상 연령
+    private String targetAge;
 
 
-    public static PlanDetailResponseDto from(Plan plan, List<String> tags) {
+    public static PlanDetailResponseDto from(Plan plan, List<String> tags, String category, String targetAge) {
         return PlanDetailResponseDto.builder()
                 .planId(plan.getPlanId())
                 .planName(plan.getPlanName())
@@ -34,8 +30,8 @@ public class PlanDetailResponseDto {
                 .messageUsage(plan.getMessageUsage())
                 .benefit(plan.getBenefit())
                 .tags(tags)
-                .category(plan.getCategoryCode())
-                .targetAge(plan.getAgeCode())
+                .category(category)
+                .targetAge(targetAge)
                 .build();
     }
 }

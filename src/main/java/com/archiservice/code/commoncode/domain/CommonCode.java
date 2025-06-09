@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "common_code")
-@IdClass(CommonCodeId.class)
 @Getter
 @NoArgsConstructor
 public class CommonCode {

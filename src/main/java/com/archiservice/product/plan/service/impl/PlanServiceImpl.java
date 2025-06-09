@@ -1,5 +1,6 @@
 package com.archiservice.product.plan.service.impl;
 
+import com.archiservice.code.commoncode.service.CommonCodeService;
 import com.archiservice.exception.BusinessException;
 import com.archiservice.exception.ErrorCode;
 import com.archiservice.product.plan.domain.Plan;
@@ -10,22 +11,30 @@ import com.archiservice.product.plan.service.PlanService;
 import com.archiservice.code.tagmeta.service.TagMetaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class PlanServiceImpl implements PlanService {
 
     private final PlanRepository planRepository;
     private final TagMetaService tagMetaService;
+    private final CommonCodeService commonCodeService;
+
+    public static final String CATEGORY_GROUP_CODE = "G02";
+    public static final String AGE_GROUP_CODE = "G01";
 
     @Override
     public List<PlanResponseDto> getAllPlans() {
         return planRepository.findAll().stream()
                 .map(plan -> {
                     List<String> tags = tagMetaService.extractTagsFromCode(plan.getTagCode());
-                    return PlanResponseDto.from(plan, tags);
+                    String category = commonCodeService.getCodeName(CATEGORY_GROUP_CODE, plan.getCategoryCode());
+                    String targetAge = commonCodeService.getCodeName(AGE_GROUP_CODE, plan.getAgeCode());
+                    return PlanResponseDto.from(plan, tags, category, targetAge);
                 })
                 .toList();
     }
@@ -36,7 +45,9 @@ public class PlanServiceImpl implements PlanService {
                 .orElseThrow(() -> new BusinessException(ErrorCode.PRODUCT_NOT_FOUND));
 
         List<String> tags = tagMetaService.extractTagsFromCode(plan.getTagCode());
+        String category = commonCodeService.getCodeName(CATEGORY_GROUP_CODE, plan.getCategoryCode());
+        String targetAge = commonCodeService.getCodeName(AGE_GROUP_CODE, plan.getAgeCode());
 
-        return PlanDetailResponseDto.from(plan, tags);
+        return PlanDetailResponseDto.from(plan, tags, category, targetAge);
     }
 }

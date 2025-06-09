@@ -3,11 +3,15 @@ package com.archiservice.code.commoncode.repository;
 import com.archiservice.code.commoncode.domain.CommonCode;
 import com.archiservice.code.commoncode.domain.id.CommonCodeId;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface CommonCodeRepository extends JpaRepository<CommonCode, CommonCodeId> {
-    List<CommonCode> findByGroupCode(String groupCode);
-    Optional<CommonCode> findByGroupCodeAndCommonCode(String groupCode, String commonCode);
+
+    @Query("SELECT cc FROM CommonCode cc WHERE cc.commonCodeId.groupCode = :groupCode AND cc.commonCodeId.commonCode = :commonCode")
+    Optional<CommonCode> findByGroupCodeAndCommonCode(
+            @Param("groupCode") String groupCode,
+            @Param("commonCode") String commonCode);
 }

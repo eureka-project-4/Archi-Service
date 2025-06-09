@@ -1,5 +1,7 @@
 package com.archiservice.code.commoncode.service;
 
+import java.util.Map;
+
 public interface CommonCodeService {
-    public String getCodeName(String groupCode, String commonCode);
+    String getCodeName(String groupCode, String commonCode);
 }
