@@ -1,5 +1,6 @@
 package com.archiservice.review.plan.dto.request;
 
+import com.archiservice.badword.NoBadWords;
 import jakarta.validation.constraints.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,6 +16,7 @@ public class PlanReviewRequestDto {
     private Integer score;
 
     @Size(max = 255, message = "리뷰 내용은 255자 이하여야 합니다")
+    @NoBadWords
     private String content;
 
     @Builder
