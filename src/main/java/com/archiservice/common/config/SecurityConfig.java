@@ -26,7 +26,7 @@ public class SecurityConfig {
 
     private final String[] WHITE_LIST = {
             "/auth/login","/auth/refresh", "/users/signup",
-            "/plans", "/vass/**", "/coupons/**"
+            "/plans/*","/plans", "/vass/**", "/coupons/**"
     };
 
     @Bean
@@ -46,7 +46,8 @@ public class SecurityConfig {
                 )
                 .addFilterBefore(new JwtAuthenticationFilter(jwtUtil, customUserDetailsService), UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(ex -> ex
-                        .authenticationEntryPoint(customAuthenticationEntryPoint));
+                        .authenticationEntryPoint(customAuthenticationEntryPoint)
+                );
 
         return http.build();
     }
