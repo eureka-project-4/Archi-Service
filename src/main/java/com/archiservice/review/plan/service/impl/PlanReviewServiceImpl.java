@@ -1,5 +1,6 @@
-package com.archiservice.review.plan.service;
+package com.archiservice.review.plan.service.impl;
 
+import com.archiservice.exception.BusinessException;
 import com.archiservice.exception.business.AlreadyReviewedException;
 import com.archiservice.exception.business.ReviewNotFoundException;
 import com.archiservice.exception.business.UserNotFoundException;
@@ -9,6 +10,7 @@ import com.archiservice.review.plan.domain.PlanReview;
 import com.archiservice.review.plan.dto.request.PlanReviewRequestDto;
 import com.archiservice.review.plan.dto.response.PlanReviewResponseDto;
 import com.archiservice.review.plan.repository.PlanReviewRepository;
+import com.archiservice.review.plan.service.PlanReviewService;
 import com.archiservice.user.domain.User;
 import com.archiservice.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +24,7 @@ import static com.archiservice.exception.ErrorCode.*;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class PlanReviewServiceImpl implements PlanReviewService{
+public class PlanReviewServiceImpl implements PlanReviewService {
 
     private final PlanReviewRepository planReviewRepository;
     private final UserRepository userRepository;
@@ -35,7 +37,7 @@ public class PlanReviewServiceImpl implements PlanReviewService{
                 .orElseThrow(() -> new UserNotFoundException(USER_NOT_FOUND.getMessage()));
 
         Plan plan = planRepository.findById(planId)
-                .orElseThrow(() -> new IllegalArgumentException(PRODUCT_NOT_FOUND.getMessage()));
+                .orElseThrow(() -> new BusinessException(PRODUCT_NOT_FOUND));
 
         if (planReviewRepository.existsByUserAndPlan(user, plan)) {
             throw new AlreadyReviewedException(ALREADY_REVIEWED.getMessage());
