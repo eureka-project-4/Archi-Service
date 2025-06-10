@@ -29,7 +29,7 @@ public class PlanReviewController {
             @AuthenticationPrincipal CustomUser customUser) {
 
         Long userId = customUser.getId();
-        return ResponseEntity.ok(ApiResponse.success("리뷰 작성에 성공하였습니다.",planReviewService.createReview(userId, planId, requestDto)));
+        return ResponseEntity.ok(ApiResponse.success("리뷰 작성에 성공하였습니다.", planReviewService.createReview(userId, planId, requestDto)));
     }
 
     @GetMapping
