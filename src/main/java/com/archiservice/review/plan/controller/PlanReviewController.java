@@ -44,7 +44,7 @@ public class PlanReviewController {
                 Sort.by(Sort.Direction.fromString(direction), sort));
         Page<PlanReviewResponseDto> reviews = planReviewService.getReviewsByPlanId(planId, pageable);
 
-        return ResponseEntity.ok(ApiResponse.success(reviews));
+        return ResponseEntity.ok(ApiResponse.success("리뷰 전체조회에 성공하였습니다.",reviews));
     }
 
     @PutMapping("/{reviewId}")
