@@ -21,7 +21,6 @@ import com.archiservice.user.repository.UserRepository;
 import com.archiservice.user.service.ContractService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -71,7 +70,6 @@ public class ContractServiceImpl implements ContractService {
         return ApiResponse.success(couponDetailResponseDto);
     }
 
-    @Transactional
     @Override
     public ApiResponse<ContractDetailResponseDto> getContract(Period period, CustomUser customUser) {
         User user = userRepository.findById(customUser.getId())
