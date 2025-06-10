@@ -2,7 +2,7 @@ package com.archiservice.user.dto.response;
 
 import com.archiservice.product.coupon.dto.response.CouponDetailResponseDto;
 import com.archiservice.product.plan.dto.response.PlanDetailResponseDto;
-import com.archiservice.product.vas.dto.response.VASDetailResponseDto;
+import com.archiservice.product.vas.dto.response.VasDetailResponseDto;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -33,7 +33,7 @@ public class ContractDetailResponseDto {
     private int couponPrice;
     private String couponCategory;
 
-    public static ContractDetailResponseDto from(ContractOnlyResponseDto contractDto, PlanDetailResponseDto planDto, VASDetailResponseDto vasDto, CouponDetailResponseDto couponDto) {
+    public static ContractDetailResponseDto from(ContractOnlyResponseDto contractDto, PlanDetailResponseDto planDto, VasDetailResponseDto vasDto, CouponDetailResponseDto couponDto) {
         return ContractDetailResponseDto.builder()
                 .paymentMethod(contractDto.getPaymentMethod())
                 .contractPrice(contractDto.getPrice())
