@@ -21,13 +21,13 @@ public class VasDetailResponseDto {
 
     public static VasDetailResponseDto from(Vas vas, List<String> tags, String category) {
         return VasDetailResponseDto.builder()
-                .serviceId(vas.getServiceId())
-                .serviceName(vas.getServiceName())
+                .serviceId(vas.getVasId())
+                .serviceName(vas.getVasName())
                 .price(vas.getPrice())
                 .discountedPrice(vas.getDiscountedPrice())
                 .saleRate(vas.getSaleRate())
                 .imageUrl(vas.getImageUrl())
-                .serviceDescription(vas.getServiceDescription())
+                .serviceDescription(vas.getVasDescription())
                 .tags(tags)
                 .category(category)
                 .isOnSale(vas.isOnSale())
