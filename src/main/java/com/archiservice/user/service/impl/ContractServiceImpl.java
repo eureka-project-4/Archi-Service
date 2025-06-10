@@ -9,8 +9,8 @@ import com.archiservice.product.coupon.dto.response.CouponDetailResponseDto;
 import com.archiservice.product.coupon.service.CouponService;
 import com.archiservice.product.plan.dto.response.PlanDetailResponseDto;
 import com.archiservice.product.plan.service.PlanService;
-import com.archiservice.product.vas.dto.response.VASDetailResponseDto;
-import com.archiservice.product.vas.service.VASService;
+import com.archiservice.product.vas.dto.response.VasDetailResponseDto;
+import com.archiservice.product.vas.service.VasService;
 import com.archiservice.user.domain.User;
 import com.archiservice.user.dto.request.ReservationRequestDto;
 import com.archiservice.user.dto.response.ContractDetailResponseDto;
@@ -29,7 +29,7 @@ public class ContractServiceImpl implements ContractService {
     private final UserRepository userRepository;
     private final ContractRepository contractRepository;
     private final PlanService planService;
-    private final VASService vasService;
+    private final VasService vasService;
     private final CouponService couponService;
 
     @Override
@@ -37,7 +37,7 @@ public class ContractServiceImpl implements ContractService {
         User user = userRepository.findById(customUser.getId())
                 .orElseThrow(() -> new UserNotFoundException());
 
-        Long planId = contractRepository.findPlanIdByPeriod(user.getUserId(), period == Period.CURRENT)
+        Long planId = contractRepository.findPlanIdByOffset(user.getUserId(), period.getOffset())
                 .orElseThrow(() -> new BusinessException(ErrorCode.PRODUCT_NOT_FOUND));
 
         PlanDetailResponseDto planDetailResponseDto = planService.getPlanDetail(planId);
@@ -46,14 +46,14 @@ public class ContractServiceImpl implements ContractService {
     }
 
     @Override
-    public ApiResponse<VASDetailResponseDto> getService(Period period, CustomUser customUser) {
+    public ApiResponse<VasDetailResponseDto> getService(Period period, CustomUser customUser) {
         User user = userRepository.findById(customUser.getId())
                 .orElseThrow(() -> new UserNotFoundException());
 
-        Long vasId = contractRepository.findVasIdByPeriod(user.getUserId(), period == Period.CURRENT)
+        Long vasId = contractRepository.findVasIdByOffset(user.getUserId(), period.getOffset())
                 .orElseThrow(() -> new BusinessException(ErrorCode.PRODUCT_NOT_FOUND));
 
-        VASDetailResponseDto vasDetailResponseDto = vasService.getVASDetail(vasId);
+        VasDetailResponseDto vasDetailResponseDto = vasService.getVASDetail(vasId);
 
         return ApiResponse.success(vasDetailResponseDto);
     }
@@ -63,7 +63,7 @@ public class ContractServiceImpl implements ContractService {
         User user = userRepository.findById(customUser.getId())
                 .orElseThrow(() -> new UserNotFoundException());
 
-        Long couponId = contractRepository.findCouponIdByPeriod(user.getUserId(), period == Period.CURRENT)
+        Long couponId = contractRepository.findCouponIdByOffset(user.getUserId(), period.getOffset())
                 .orElseThrow(() -> new BusinessException(ErrorCode.PRODUCT_NOT_FOUND));
 
         CouponDetailResponseDto couponDetailResponseDto = couponService.getCouponDetail(couponId);
@@ -77,22 +77,22 @@ public class ContractServiceImpl implements ContractService {
         User user = userRepository.findById(customUser.getId())
                 .orElseThrow(() -> new UserNotFoundException());
 
-        Long planId = contractRepository.findPlanIdByPeriod(user.getUserId(), period == Period.CURRENT)
+        Long planId = contractRepository.findPlanIdByOffset(user.getUserId(), period.getOffset())
                 .orElseThrow(() -> new BusinessException(ErrorCode.PRODUCT_NOT_FOUND));
 
         PlanDetailResponseDto planDetailResponseDto = planService.getPlanDetail(planId);
 
-        Long vasId = contractRepository.findVasIdByPeriod(user.getUserId(), period == Period.CURRENT)
+        Long vasId = contractRepository.findVasIdByOffset(user.getUserId(), period.getOffset())
                 .orElseThrow(() -> new BusinessException(ErrorCode.PRODUCT_NOT_FOUND));
 
-        VASDetailResponseDto vasDetailResponseDto = vasService.getVASDetail(vasId);
+        VasDetailResponseDto vasDetailResponseDto = vasService.getVASDetail(vasId);
 
-        Long couponId = contractRepository.findCouponIdByPeriod(user.getUserId(), period == Period.CURRENT)
+        Long couponId = contractRepository.findCouponIdByOffset(user.getUserId(), period.getOffset())
                 .orElseThrow(() -> new BusinessException(ErrorCode.PRODUCT_NOT_FOUND));
 
         CouponDetailResponseDto couponDetailResponseDto = couponService.getCouponDetail(couponId);
 
-        ContractOnlyResponseDto contractOnlyResponseDto = contractRepository.findContractByPeriod(user, period == Period.CURRENT)
+        ContractOnlyResponseDto contractOnlyResponseDto = contractRepository.findContractByOffset(user, period.getOffset())
                 .orElseThrow(() -> new BusinessException(ErrorCode.PRODUCT_NOT_FOUND));
 
         ContractDetailResponseDto contractDetailResponseDto = ContractDetailResponseDto.from(contractOnlyResponseDto, planDetailResponseDto, vasDetailResponseDto, couponDetailResponseDto);
