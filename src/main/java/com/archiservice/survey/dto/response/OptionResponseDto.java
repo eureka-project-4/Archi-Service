@@ -19,7 +19,7 @@ public class OptionResponseDto {
 	public static OptionResponseDto from(Option option) {
 		return OptionResponseDto.builder()
 				.optionText(option.getOptionText())
-				.tagCode(option.getTestCode())
+				.tagCode(option.getTagCode())
 				.nextQustionId(option.getNextQuestionId())
 				.build();
 	}

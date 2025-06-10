@@ -23,7 +23,7 @@ public class Option {
 	private Question surveyQuestion;
 	
 	private String optionText;
-	private Long testCode;
+	private Long tagCode;
 	private Long nextQuestionId;
 	
 }
