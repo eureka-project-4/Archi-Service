@@ -1,5 +1,6 @@
 package com.archiservice.survey.dto.response;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.archiservice.survey.domain.Question;

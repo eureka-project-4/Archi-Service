@@ -1,15 +1,19 @@
 package com.archiservice.survey.controller;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.archiservice.common.response.ApiResponse;
+import com.archiservice.common.security.CustomUser;
 import com.archiservice.survey.dto.response.QuestionResponseDto;
 import com.archiservice.survey.service.SurveyService;
 
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -21,8 +25,18 @@ public class SuerveyController {
 	
 	@GetMapping("/questions")
 	public ResponseEntity<ApiResponse<QuestionResponseDto>> getQuestion(
-			@RequestParam(required = false, name = "nextQuestionId") Long nextQuestionId){
-		return ResponseEntity.ok(surveyService.getQuestion(nextQuestionId));
+			@RequestParam(required = false, name = "nextQuestionId") Long nextQuestionId,
+			@RequestParam(required = false, name = "tagCode") Long tagCode,
+			HttpSession session){
+		return ResponseEntity.ok(surveyService.getQuestion(nextQuestionId, tagCode, session));
 	}
 	
+	@PostMapping("/save")
+	public ResponseEntity<ApiResponse<String>> saveResult(
+			@AuthenticationPrincipal CustomUser customUser,
+			HttpSession session){
+		Long userId = customUser.getId();
+		return ResponseEntity.ok(surveyService.saveResult(userId, session));
+	}
 }
+
