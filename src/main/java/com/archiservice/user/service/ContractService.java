@@ -11,7 +11,7 @@ import com.archiservice.user.enums.Period;
 
 public interface ContractService {
     ApiResponse<PlanDetailResponseDto> getPlan(Period period, CustomUser customUser);
-    ApiResponse<VasDetailResponseDto> getService(Period period, CustomUser customUser);
+    ApiResponse<VasDetailResponseDto> getVas(Period period, CustomUser customUser);
     ApiResponse<CouponDetailResponseDto> getCoupon(Period period, CustomUser customUser);
     ApiResponse<ContractDetailResponseDto> getContract (Period period, CustomUser customUser);
 

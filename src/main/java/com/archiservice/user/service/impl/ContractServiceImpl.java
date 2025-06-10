@@ -45,7 +45,7 @@ public class ContractServiceImpl implements ContractService {
     }
 
     @Override
-    public ApiResponse<VasDetailResponseDto> getService(Period period, CustomUser customUser) {
+    public ApiResponse<VasDetailResponseDto> getVas(Period period, CustomUser customUser) {
         User user = userRepository.findById(customUser.getId())
                 .orElseThrow(() -> new UserNotFoundException());
 

@@ -52,7 +52,7 @@ public class UserController {
 
     @GetMapping("/current/vass")
     public ResponseEntity<ApiResponse<VasDetailResponseDto>> getCurrentService(@AuthenticationPrincipal CustomUser user) {
-        return ResponseEntity.ok(contractService.getService(CURRENT, user));
+        return ResponseEntity.ok(contractService.getVas(CURRENT, user));
     }
 
     @GetMapping("/current/coupons")
@@ -72,7 +72,7 @@ public class UserController {
 
     @GetMapping("/next/vass")
     public ResponseEntity<ApiResponse<VasDetailResponseDto>> getNextService(@AuthenticationPrincipal CustomUser user) {
-        return ResponseEntity.ok(contractService.getService(NEXT, user));
+        return ResponseEntity.ok(contractService.getVas(NEXT, user));
     }
 
     @GetMapping("/next/coupons")
