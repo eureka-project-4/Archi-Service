@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.archiservice.code.tagmeta.service.TagMetaService;
 import com.archiservice.common.response.ApiResponse;
 import com.archiservice.exception.BusinessException;
 import com.archiservice.exception.ErrorCode;
@@ -24,29 +25,36 @@ public class SurveyServiceImpl implements SurveyService{
 
 	private final QuestionRepository questionRepository;
 	private final UserRepository userRepository;
+	private final TagMetaService metaService;
 	
 	@Override
 	public ApiResponse<QuestionResponseDto> getQuestion(Long nextQuestionId, Long tagCode, HttpSession session) {
 		
 		if (Long.valueOf(1L).equals(nextQuestionId)) {
-		    session.removeAttribute("tagCodes");
+		    session.removeAttribute("tagCodeSum");
 		}
 		
-	    List<Long> tagCodes = (List<Long>) session.getAttribute("tagCodes");
+	    Long tagCodeSum = (Long) session.getAttribute("tagCodeSum");
 
-	    if (tagCodes == null) {
-	        tagCodes = new ArrayList<>();
-	        session.setAttribute("tagCodes", tagCodes);
+	    if (tagCodeSum == null) {
+	    	tagCodeSum = 0L;
 	    }
 
 	    if (tagCode != null) {
-	        tagCodes.add(tagCode);
+	    	tagCodeSum += tagCode;
 	    }
 		
+	    session.setAttribute("tagCodeSum", tagCodeSum);
+	    
+	    System.out.println("누적 태그코드 합: " + tagCodeSum);
+	    
 		Question question;
 		
 		if (nextQuestionId == null) {
 			// 성향 테스트 종료 지점
+			List<String> tagCodes = metaService.extractTagsFromCode(tagCodeSum);
+			session.setAttribute("tagCodes", tagCodes);
+			System.out.println(tagCodes);
 			return ApiResponse.success(new QuestionResponseDto("성향 테스트 종료", 0, List.of()));
 			
 		}else {
