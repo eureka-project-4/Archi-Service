@@ -4,11 +4,11 @@ import com.archiservice.code.commoncode.service.CommonCodeService;
 import com.archiservice.code.tagmeta.service.TagMetaService;
 import com.archiservice.exception.BusinessException;
 import com.archiservice.exception.ErrorCode;
-import com.archiservice.product.vas.domain.VAS;
-import com.archiservice.product.vas.dto.response.VASDetailResponseDto;
-import com.archiservice.product.vas.dto.response.VASResponseDto;
-import com.archiservice.product.vas.repository.VASRepository;
-import com.archiservice.product.vas.service.VASService;
+import com.archiservice.product.vas.domain.Vas;
+import com.archiservice.product.vas.dto.response.VasDetailResponseDto;
+import com.archiservice.product.vas.dto.response.VasResponseDto;
+import com.archiservice.product.vas.repository.VasRepository;
+import com.archiservice.product.vas.service.VasService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,33 +18,33 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class VASServiceImpl implements VASService {
+public class VasServiceImpl implements VasService {
 
-    private final VASRepository vasRepository;
+    private final VasRepository vasRepository;
     private final TagMetaService tagMetaService;
     private final CommonCodeService commonCodeService;
 
     public static final String CATEGORY_GROUP_CODE = "G03"; // 부가 서비스
 
     @Override
-    public List<VASResponseDto> getAllVASs() {
+    public List<VasResponseDto> getAllVASs() {
         return vasRepository.findAll().stream()
                 .map(vas -> {
                     List<String> tags = tagMetaService.extractTagsFromCode(vas.getTagCode());
                     String category = commonCodeService.getCodeName(CATEGORY_GROUP_CODE, vas.getCategoryCode());
-                    return VASResponseDto.from(vas, tags, category);
+                    return VasResponseDto.from(vas, tags, category);
                 })
                 .toList();
     }
 
     @Override
-    public VASDetailResponseDto getVASDetail(Long serviceId) {
-        VAS vas = vasRepository.findById(serviceId)
+    public VasDetailResponseDto getVASDetail(Long serviceId) {
+        Vas vas = vasRepository.findById(serviceId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.PRODUCT_NOT_FOUND));
 
         List<String> tags = tagMetaService.extractTagsFromCode(vas.getTagCode());
         String category = commonCodeService.getCodeName(CATEGORY_GROUP_CODE, vas.getCategoryCode());
 
-        return VASDetailResponseDto.from(vas, tags, category);
+        return VasDetailResponseDto.from(vas, tags, category);
     }
 }
