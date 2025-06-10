@@ -1,0 +1,58 @@
+package com.archiservice.review.vas.domain;
+
+import com.archiservice.common.TimeStamp;
+import com.archiservice.exception.ErrorCode;
+import com.archiservice.exception.business.NotMyReviewException;
+import com.archiservice.product.plan.domain.Plan;
+import com.archiservice.product.vas.domain.Vas;
+import com.archiservice.user.domain.User;
+import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+@Entity
+@Table(name = "service_reviews")
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class VasReview extends TimeStamp {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "service_review_id")
+    private Long serviceReviewId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "service_id", nullable = false)
+    private Vas vas;
+
+    @Column(name = "score", nullable = false)
+    private Integer score;
+
+    @Column(name = "content")
+    private String content;
+
+    @Builder
+    public VasReview(User user, Vas vas, Integer score, String content) {
+        this.user = user;
+        this.vas = vas;
+        this.score = score;
+        this.content = content;
+    }
+
+    public void updateReview(Integer score, String content) {
+        this.score = score;
+        this.content = content;
+    }
+
+    public void validateOwner(Long userId) {
+        if (!this.user.getUserId().equals(userId)) {
+            throw new NotMyReviewException(ErrorCode.NOT_MY_REVIEW.getMessage());
+        }
+    }
+}

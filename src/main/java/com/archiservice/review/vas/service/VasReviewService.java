@@ -1,0 +1,13 @@
+package com.archiservice.review.vas.service;
+
+import com.archiservice.review.vas.dto.request.VasReviewRequestDto;
+import com.archiservice.review.vas.dto.response.VasReviewResponseDto;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
+public interface VasReviewService {
+    VasReviewResponseDto createReview(Long userId, Long serviceId, VasReviewRequestDto requestDto);
+    VasReviewResponseDto updateReview(Long userId, Long reviewId, VasReviewRequestDto requestDto);
+    void deleteReview(Long userId, Long reviewId);
+    Page<VasReviewResponseDto> getReviewsByServiceId(Long serviceId, Pageable pageable);
+}
