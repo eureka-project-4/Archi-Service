@@ -1,11 +1,13 @@
 package com.archiservice.common.config;
 
+import com.archiservice.common.config.handler.CustomAuthenticationEntryPoint;
 import com.archiservice.common.security.CustomUserDetailsService;
 import com.archiservice.common.security.JwtAuthenticationFilter;
 import com.archiservice.common.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -24,7 +26,7 @@ public class SecurityConfig {
 
     private final String[] WHITE_LIST = {
             "/auth/login","/auth/refresh", "/users/signup",
-            "/plans/**", "/vass/**", "/coupons/**"
+            "/plans", "/vass/**", "/coupons/**"
     };
 
     @Bean
@@ -33,15 +35,18 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, CustomAuthenticationEntryPoint customAuthenticationEntryPoint) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(WHITE_LIST).permitAll()
+                        .requestMatchers(HttpMethod.GET, "/plans/*/reviews").permitAll()
                         .anyRequest().authenticated()
                 )
-                .addFilterBefore(new JwtAuthenticationFilter(jwtUtil, customUserDetailsService), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(new JwtAuthenticationFilter(jwtUtil, customUserDetailsService), UsernamePasswordAuthenticationFilter.class)
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint(customAuthenticationEntryPoint));
 
         return http.build();
     }
