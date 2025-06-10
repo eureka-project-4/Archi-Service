@@ -73,13 +73,12 @@ public class SurveyServiceImpl implements SurveyService{
 		User user = userRepository.findById(userId)
 		        .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 		
-		List<Long> tagCodes = (List<Long>) session.getAttribute("tagCodes"); // List
+		Long tagCode = (Long) session.getAttribute("tagCodeSum"); // List
 		
-		if (tagCodes == null || tagCodes.isEmpty()) {
+		if (tagCode == null) {
 		    throw new BusinessException(ErrorCode.PRODUCT_NOT_FOUND, "저장된 태그코드가 없습니다.");
 		}
 
-		Long tagCode = tagCodes.stream().mapToLong(Long::longValue).sum();
 		user.setTagCode(tagCode);
 		userRepository.save(user);
 		session.removeAttribute("tagCodes");
