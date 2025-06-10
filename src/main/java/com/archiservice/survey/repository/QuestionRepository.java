@@ -7,5 +7,4 @@ import com.archiservice.survey.domain.Question;
 
 @Repository
 public interface QuestionRepository extends JpaRepository<Question, Long>{
-
 }

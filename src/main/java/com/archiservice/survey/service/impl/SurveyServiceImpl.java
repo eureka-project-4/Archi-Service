@@ -47,7 +47,6 @@ public class SurveyServiceImpl implements SurveyService{
 		
 		if (nextQuestionId == null) {
 			// 성향 테스트 종료 지점
-			tagCodes.add(tagCode);
 			return ApiResponse.success(new QuestionResponseDto("성향 테스트 종료", 0, List.of()));
 			
 		}else {
@@ -60,6 +59,7 @@ public class SurveyServiceImpl implements SurveyService{
 		return ApiResponse.success(questionResponseDto);
 	}
 
+	
 	@Override
 	public ApiResponse<String> saveResult(Long userId, HttpSession session) {
 		User user = userRepository.findById(userId)
@@ -67,9 +67,14 @@ public class SurveyServiceImpl implements SurveyService{
 		
 		List<Long> tagCodes = (List<Long>) session.getAttribute("tagCodes"); // List
 		
+		if (tagCodes == null || tagCodes.isEmpty()) {
+		    throw new BusinessException(ErrorCode.PRODUCT_NOT_FOUND, "저장된 태그코드가 없습니다.");
+		}
+
 		Long tagCode = tagCodes.stream().mapToLong(Long::longValue).sum();
 		user.setTagCode(tagCode);
 		userRepository.save(user);
+		session.removeAttribute("tagCodes");
 		return ApiResponse.success("성향 저장");
 	}
 	
