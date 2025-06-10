@@ -1,6 +1,6 @@
 package com.archiservice.user.repository;
 
-import com.archiservice.user.domain.Contracts;
+import com.archiservice.user.domain.Contract;
 import com.archiservice.user.domain.User;
 import com.archiservice.user.dto.response.ContractOnlyResponseDto;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface ContractsRepository extends JpaRepository<Contracts, Long> {
+public interface ContractRepository extends JpaRepository<Contract, Long> {
 
     @Query(value =
             "SELECT pb.plan_id " +
@@ -45,7 +45,7 @@ public interface ContractsRepository extends JpaRepository<Contracts, Long> {
 
     @Query("SELECT new com.archiservice.user.dto.response.ContractOnlyResponseDto(" +
             "c.paymentMethod, c.price, c.startDate, c.endDate) " +
-            "FROM Contracts c " +
+            "FROM Contract c " +
             "WHERE c.user = :user " +
             "ORDER BY c.id DESC " +
             "LIMIT 1 OFFSET 1")
@@ -83,7 +83,7 @@ public interface ContractsRepository extends JpaRepository<Contracts, Long> {
 
     @Query("SELECT new com.archiservice.user.dto.response.ContractOnlyResponseDto(" +
             "c.paymentMethod, c.price, c.startDate, c.endDate) " +
-            "FROM Contracts c " +
+            "FROM Contract c " +
             "WHERE c.user = :user " +
             "ORDER BY c.id DESC " +
             "LIMIT 1")

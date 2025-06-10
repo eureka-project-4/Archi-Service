@@ -1,15 +1,18 @@
 package com.archiservice.user.domain;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
 @Entity
-@Data
+@Getter
+@NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
-public class Contracts {
+@Table(name = "contracts")
+public class Contract {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "contract_id")

@@ -16,18 +16,18 @@ import com.archiservice.user.dto.request.ReservationRequestDto;
 import com.archiservice.user.dto.response.ContractDetailResponseDto;
 import com.archiservice.user.dto.response.ContractOnlyResponseDto;
 import com.archiservice.user.enums.Period;
-import com.archiservice.user.repository.ContractsRepository;
+import com.archiservice.user.repository.ContractRepository;
 import com.archiservice.user.repository.UserRepository;
-import com.archiservice.user.service.ContractsService;
+import com.archiservice.user.service.ContractService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class ContractsServiceImpl implements ContractsService {
+public class ContractServiceImpl implements ContractService {
     private final UserRepository userRepository;
-    private final ContractsRepository contractsRepository;
+    private final ContractRepository contractRepository;
     private final PlanService planService;
     private final VASService vasService;
     private final CouponService couponService;
@@ -37,7 +37,7 @@ public class ContractsServiceImpl implements ContractsService {
         User user = userRepository.findById(customUser.getId())
                 .orElseThrow(() -> new UserNotFoundException());
 
-        Long planId = contractsRepository.findPlanIdByPeriod(user.getUserId(), period == Period.CURRENT)
+        Long planId = contractRepository.findPlanIdByPeriod(user.getUserId(), period == Period.CURRENT)
                 .orElseThrow(() -> new BusinessException(ErrorCode.PRODUCT_NOT_FOUND));
 
         PlanDetailResponseDto planDetailResponseDto = planService.getPlanDetail(planId);
@@ -50,7 +50,7 @@ public class ContractsServiceImpl implements ContractsService {
         User user = userRepository.findById(customUser.getId())
                 .orElseThrow(() -> new UserNotFoundException());
 
-        Long vasId = contractsRepository.findVasIdByPeriod(user.getUserId(), period == Period.CURRENT)
+        Long vasId = contractRepository.findVasIdByPeriod(user.getUserId(), period == Period.CURRENT)
                 .orElseThrow(() -> new BusinessException(ErrorCode.PRODUCT_NOT_FOUND));
 
         VASDetailResponseDto vasDetailResponseDto = vasService.getVASDetail(vasId);
@@ -63,7 +63,7 @@ public class ContractsServiceImpl implements ContractsService {
         User user = userRepository.findById(customUser.getId())
                 .orElseThrow(() -> new UserNotFoundException());
 
-        Long couponId = contractsRepository.findCouponIdByPeriod(user.getUserId(), period == Period.CURRENT)
+        Long couponId = contractRepository.findCouponIdByPeriod(user.getUserId(), period == Period.CURRENT)
                 .orElseThrow(() -> new BusinessException(ErrorCode.PRODUCT_NOT_FOUND));
 
         CouponDetailResponseDto couponDetailResponseDto = couponService.getCouponDetail(couponId);
@@ -77,22 +77,22 @@ public class ContractsServiceImpl implements ContractsService {
         User user = userRepository.findById(customUser.getId())
                 .orElseThrow(() -> new UserNotFoundException());
 
-        Long planId = contractsRepository.findPlanIdByPeriod(user.getUserId(), period == Period.CURRENT)
+        Long planId = contractRepository.findPlanIdByPeriod(user.getUserId(), period == Period.CURRENT)
                 .orElseThrow(() -> new BusinessException(ErrorCode.PRODUCT_NOT_FOUND));
 
         PlanDetailResponseDto planDetailResponseDto = planService.getPlanDetail(planId);
 
-        Long vasId = contractsRepository.findVasIdByPeriod(user.getUserId(), period == Period.CURRENT)
+        Long vasId = contractRepository.findVasIdByPeriod(user.getUserId(), period == Period.CURRENT)
                 .orElseThrow(() -> new BusinessException(ErrorCode.PRODUCT_NOT_FOUND));
 
         VASDetailResponseDto vasDetailResponseDto = vasService.getVASDetail(vasId);
 
-        Long couponId = contractsRepository.findCouponIdByPeriod(user.getUserId(), period == Period.CURRENT)
+        Long couponId = contractRepository.findCouponIdByPeriod(user.getUserId(), period == Period.CURRENT)
                 .orElseThrow(() -> new BusinessException(ErrorCode.PRODUCT_NOT_FOUND));
 
         CouponDetailResponseDto couponDetailResponseDto = couponService.getCouponDetail(couponId);
 
-        ContractOnlyResponseDto contractOnlyResponseDto = contractsRepository.findContractByPeriod(user, period == Period.CURRENT)
+        ContractOnlyResponseDto contractOnlyResponseDto = contractRepository.findContractByPeriod(user, period == Period.CURRENT)
                 .orElseThrow(() -> new BusinessException(ErrorCode.PRODUCT_NOT_FOUND));
 
         ContractDetailResponseDto contractDetailResponseDto = ContractDetailResponseDto.from(contractOnlyResponseDto, planDetailResponseDto, vasDetailResponseDto, couponDetailResponseDto);

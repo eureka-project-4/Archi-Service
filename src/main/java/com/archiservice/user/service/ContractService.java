@@ -9,7 +9,7 @@ import com.archiservice.user.dto.request.ReservationRequestDto;
 import com.archiservice.user.dto.response.ContractDetailResponseDto;
 import com.archiservice.user.enums.Period;
 
-public interface ContractsService {
+public interface ContractService {
     ApiResponse<PlanDetailResponseDto> getPlan(Period period, CustomUser customUser);
     ApiResponse<VASDetailResponseDto> getService(Period period, CustomUser customUser);
     ApiResponse<CouponDetailResponseDto> getCoupon(Period period, CustomUser customUser);

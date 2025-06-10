@@ -10,7 +10,7 @@ import com.archiservice.user.dto.request.ReservationRequestDto;
 import com.archiservice.user.dto.response.ContractDetailResponseDto;
 import com.archiservice.user.dto.response.ProfileResponseDto;
 import com.archiservice.user.dto.response.TendencyResponseDto;
-import com.archiservice.user.service.ContractsService;
+import com.archiservice.user.service.ContractService;
 import com.archiservice.user.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +28,7 @@ import static com.archiservice.user.enums.Period.NEXT;
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
-    private final ContractsService contractsService;
+    private final ContractService contractService;
 
     @GetMapping("/profile")
     public ResponseEntity<ApiResponse<ProfileResponseDto>> getUserProfile(@AuthenticationPrincipal CustomUser user) {
@@ -47,47 +47,47 @@ public class UserController {
 
     @GetMapping("/current/plans")
     public ResponseEntity<ApiResponse<PlanDetailResponseDto>> getCurrentPlan(@AuthenticationPrincipal CustomUser user) {
-        return ResponseEntity.ok(contractsService.getPlan(CURRENT, user));
+        return ResponseEntity.ok(contractService.getPlan(CURRENT, user));
     }
 
     @GetMapping("/current/vass")
     public ResponseEntity<ApiResponse<VASDetailResponseDto>> getCurrentService(@AuthenticationPrincipal CustomUser user) {
-        return ResponseEntity.ok(contractsService.getService(CURRENT, user));
+        return ResponseEntity.ok(contractService.getService(CURRENT, user));
     }
 
     @GetMapping("/current/coupons")
     public ResponseEntity<ApiResponse<CouponDetailResponseDto>> getCurrentCoupon(@AuthenticationPrincipal CustomUser user) {
-        return ResponseEntity.ok(contractsService.getCoupon(CURRENT, user));
+        return ResponseEntity.ok(contractService.getCoupon(CURRENT, user));
     }
 
     @GetMapping("/current")
     public ResponseEntity<ApiResponse<ContractDetailResponseDto>> getCurrentContract(@AuthenticationPrincipal CustomUser user) {
-        return ResponseEntity.ok(contractsService.getContract(CURRENT, user));
+        return ResponseEntity.ok(contractService.getContract(CURRENT, user));
     }
 
     @GetMapping("/next/plans")
     public ResponseEntity<ApiResponse<PlanDetailResponseDto>> getNextPlan(@AuthenticationPrincipal CustomUser user) {
-        return ResponseEntity.ok(contractsService.getPlan(NEXT, user));
+        return ResponseEntity.ok(contractService.getPlan(NEXT, user));
     }
 
     @GetMapping("/next/vass")
     public ResponseEntity<ApiResponse<VASDetailResponseDto>> getNextService(@AuthenticationPrincipal CustomUser user) {
-        return ResponseEntity.ok(contractsService.getService(NEXT, user));
+        return ResponseEntity.ok(contractService.getService(NEXT, user));
     }
 
     @GetMapping("/next/coupons")
     public ResponseEntity<ApiResponse<CouponDetailResponseDto>> getNextCoupon(@AuthenticationPrincipal CustomUser user) {
-        return ResponseEntity.ok(contractsService.getCoupon(NEXT, user));
+        return ResponseEntity.ok(contractService.getCoupon(NEXT, user));
     }
 
     @GetMapping("/next")
     public ResponseEntity<ApiResponse<ContractDetailResponseDto>> getNextContract(@AuthenticationPrincipal CustomUser user) {
-        return ResponseEntity.ok(contractsService.getContract(NEXT, user));
+        return ResponseEntity.ok(contractService.getContract(NEXT, user));
     }
 
     @PutMapping("/next")
     public ResponseEntity<ApiResponse> cancelNextReservation(@Valid @RequestBody ReservationRequestDto request,
                                                                      @AuthenticationPrincipal CustomUser user) {
-        return ResponseEntity.ok(contractsService.updateNextReservation(request,user));
+        return ResponseEntity.ok(contractService.updateNextReservation(request,user));
     }
 }
