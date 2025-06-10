@@ -33,8 +33,20 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setCharacterEncoding("UTF-8");
 
-        ApiResponse<Object> errorResponse = ApiResponse.fail(ErrorCode.LOGIN_REQUIRED);
+        ApiResponse<Object> errorResponse = ApiResponse.fail(getErrorMessage(authException));
 
         response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
     }
+
+    private ErrorCode getErrorMessage(AuthenticationException authException) {
+        if (authException.getMessage().contains("JWT expired")) {
+            return ErrorCode.EXPIRED_TOKEN;
+        } else if (authException.getMessage().contains("Invalid JWT")) {
+            return ErrorCode.INVALID_TOKEN;
+        } else {
+            return ErrorCode.LOGIN_REQUIRED;
+        }
+    }
+
 }
+
