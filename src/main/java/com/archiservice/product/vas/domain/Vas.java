@@ -26,6 +26,7 @@ public class Vas extends TimeStamp {
     @Column(name = "image_url")
     private String imageUrl;
 
+
     @Column(name = "vas_description")
     private String vasDescription;
 

@@ -2,12 +2,12 @@ package com.archiservice.user.repository;
 
 import com.archiservice.user.domain.Contract;
 import com.archiservice.user.domain.User;
-import com.archiservice.user.dto.response.ContractOnlyResponseDto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -37,12 +37,5 @@ public interface ContractRepository extends JpaRepository<Contract, Long> {
             "LIMIT 1 OFFSET :offset", nativeQuery = true)
     Optional<Long> findCouponIdByOffset(@Param("userId") Long userId, @Param("offset") int offset);
 
-    @Query("SELECT new com.archiservice.user.dto.response.ContractOnlyResponseDto(" +
-            "c.paymentMethod, c.price, c.startDate, c.endDate) " +
-            "FROM Contract c " +
-            "WHERE c.user = :user " +
-            "ORDER BY c.id DESC " +
-            "LIMIT 1 OFFSET :offset")
-    Optional<ContractOnlyResponseDto> findContractByOffset(@Param("user") User user, @Param("offset") int offset);
-
+    List<Contract> findTop2ByUserOrderByIdDesc(User user);
 }
