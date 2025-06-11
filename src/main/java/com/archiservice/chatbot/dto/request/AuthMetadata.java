@@ -1,4 +1,4 @@
-package com.archiservice.chatbot.dto;
+package com.archiservice.chatbot.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class AiMessage {
-  private AuthMetadata metadata;
-  private ChatMessageDto payload;
+public class AuthMetadata {
+  private int tagCode;
+  private int ageCode;
 }

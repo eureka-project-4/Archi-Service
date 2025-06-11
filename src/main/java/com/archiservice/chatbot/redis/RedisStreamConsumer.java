@@ -1,6 +1,6 @@
 package com.archiservice.chatbot.redis;
 
-import com.archiservice.chatbot.dto.ChatResponseDto;
+import com.archiservice.chatbot.dto.response.ChatResponseDto;
 import com.archiservice.chatbot.service.AiService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;

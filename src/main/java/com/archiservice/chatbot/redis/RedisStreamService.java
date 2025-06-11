@@ -1,6 +1,6 @@
 package com.archiservice.chatbot.redis;
 
-import com.archiservice.chatbot.dto.AiMessage;
+import com.archiservice.chatbot.dto.request.AiPromptMessage;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Map;
@@ -14,10 +14,10 @@ public class RedisStreamService {
 
   private final StreamOperations<String, Object, Object> streamOperations;
 
-  public void sendToAI(AiMessage aiMessage) {
+  public void sendToAI(AiPromptMessage aiPromptMessage) {
     try {
       ObjectMapper objectMapper = new ObjectMapper();
-      String json = objectMapper.writeValueAsString(aiMessage);
+      String json = objectMapper.writeValueAsString(aiPromptMessage);
 
       Map<String, Object> messageMap = Map.of(
           "data", json

@@ -2,10 +2,10 @@ package com.archiservice.chatbot.service.impl;
 
 import com.archiservice.chatbot.domain.AuthInfo;
 import com.archiservice.chatbot.domain.Chat;
-import com.archiservice.chatbot.dto.AiMessage;
-import com.archiservice.chatbot.dto.AuthMetadata;
+import com.archiservice.chatbot.dto.request.AiPromptMessage;
+import com.archiservice.chatbot.dto.request.AuthMetadata;
 import com.archiservice.chatbot.dto.ChatMessageDto;
-import com.archiservice.chatbot.dto.ChatResponseDto;
+import com.archiservice.chatbot.dto.response.ChatResponseDto;
 import com.archiservice.chatbot.dto.type.Sender;
 import com.archiservice.chatbot.redis.RedisStreamService;
 import com.archiservice.chatbot.repository.ChatRepository;
@@ -30,9 +30,9 @@ public class AiServiceImpl implements AiService {
     ChatMessageDto requestDto = ChatMessageDto.fromChat(chat);
 
     AuthMetadata metadata = new AuthMetadata(authInfo.getTagCode(), authInfo.getAgeCode());
-    AiMessage aiMessage = new AiMessage(metadata, requestDto);
+    AiPromptMessage aiPromptMessage = new AiPromptMessage(metadata, requestDto);
 
-    redisStreamService.sendToAI(aiMessage);
+    redisStreamService.sendToAI(aiPromptMessage);
   }
 
   @Override

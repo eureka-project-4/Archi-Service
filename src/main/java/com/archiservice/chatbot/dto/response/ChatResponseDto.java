@@ -1,5 +1,6 @@
-package com.archiservice.chatbot.dto;
+package com.archiservice.chatbot.dto.response;
 
+import com.archiservice.chatbot.dto.ChatMessageDto;
 import lombok.Data;
 
 @Data

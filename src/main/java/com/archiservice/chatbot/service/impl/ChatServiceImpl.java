@@ -4,6 +4,7 @@ package com.archiservice.chatbot.service.impl;
 import com.archiservice.chatbot.domain.AuthInfo;
 import com.archiservice.chatbot.domain.Chat;
 import com.archiservice.chatbot.dto.ChatMessageDto;
+import com.archiservice.chatbot.dto.request.ChatMessageRequestDto;
 import com.archiservice.chatbot.dto.type.MessageType;
 import com.archiservice.chatbot.dto.type.Sender;
 import com.archiservice.chatbot.repository.ChatRepository;
@@ -39,26 +40,28 @@ public class ChatServiceImpl implements ChatService {
     private final AiService aiService;
 
     @Override
-    public void handleUserMessage(ChatMessageDto message, AuthInfo authInfo) {
+    public void handleUserMessage(ChatMessageRequestDto request, AuthInfo authInfo) {
         User user = userRepository.findById(authInfo.getUserId())
             .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
         Chat chat = Chat.builder()
             .user(user)
             .sender(Sender.USER)
-            .message(message.getContent())
+            .message(request.getContent())
             .messageType(MessageType.USER_MESSAGE)
             .build();
         Chat savedChat = chatRepository.save(chat);
 
+        ChatMessageDto response = ChatMessageDto.fromChat(savedChat);
+
         String key = "chat:user:" + authInfo.getUserId();
-        chatMessageRedisTemplate.opsForList().leftPush(key, ChatMessageDto.fromChat(chat));
+        chatMessageRedisTemplate.opsForList().leftPush(key, response);
         chatMessageRedisTemplate.expire(key, Duration.ofHours(24));
 
         messagingTemplate.convertAndSendToUser(
             String.valueOf(authInfo.getUserId()),
             "/queue/chat",
-            message
+            response
         );
 
         aiService.sendMessageToAI(savedChat, authInfo);
