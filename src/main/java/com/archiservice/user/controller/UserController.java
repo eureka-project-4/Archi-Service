@@ -20,8 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static com.archiservice.user.enums.Period.CURRENT;
-import static com.archiservice.user.enums.Period.NEXT;
+import static com.archiservice.user.enums.Period.*;
 
 @RestController
 @RequestMapping("/users")
@@ -61,7 +60,7 @@ public class UserController {
     }
 
     @GetMapping("/current")
-    public ResponseEntity<ApiResponse<ContractDetailResponseDto>> getCurrentContract(@AuthenticationPrincipal CustomUser user) {
+    public ResponseEntity<ApiResponse<List<ContractDetailResponseDto>>> getCurrentContract(@AuthenticationPrincipal CustomUser user) {
         return ResponseEntity.ok(contractService.getContract(CURRENT, user));
     }
 
@@ -81,13 +80,17 @@ public class UserController {
     }
 
     @GetMapping("/next")
-    public ResponseEntity<ApiResponse<ContractDetailResponseDto>> getNextContract(@AuthenticationPrincipal CustomUser user) {
+    public ResponseEntity<ApiResponse<List<ContractDetailResponseDto>>> getNextContract(@AuthenticationPrincipal CustomUser user) {
         return ResponseEntity.ok(contractService.getContract(NEXT, user));
     }
 
     @PutMapping("/next")
-    public ResponseEntity<ApiResponse> cancelNextReservation(@Valid @RequestBody ReservationRequestDto request,
-                                                                     @AuthenticationPrincipal CustomUser user) {
-        return ResponseEntity.ok(contractService.updateNextReservation(request,user));
+    public ResponseEntity<ApiResponse> cancelNextReservation(@AuthenticationPrincipal CustomUser user) {
+        return ResponseEntity.ok(contractService.cancelNextReservation(user));
+    }
+
+    @GetMapping("/history")
+    public ResponseEntity<ApiResponse<List<ContractDetailResponseDto>>> getHistoryContract(@AuthenticationPrincipal CustomUser user) {
+        return ResponseEntity.ok(contractService.getContract(HISTORY, user));
     }
 }

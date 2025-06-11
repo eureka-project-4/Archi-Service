@@ -20,8 +20,8 @@ public class VasResponseDto {
 
     public static VasResponseDto from(Vas vas, List<String> tags, String category) {
         return VasResponseDto.builder()
-                .serviceId(vas.getServiceId())
-                .serviceName(vas.getServiceName())
+                .serviceId(vas.getVasId())
+                .serviceName(vas.getVasName())
                 .price(vas.getPrice())
                 .discountedPrice(vas.getDiscountedPrice())
                 .saleRate(vas.getSaleRate())

@@ -15,10 +15,10 @@ public class Vas extends TimeStamp {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "service_id")
-    private Long serviceId;
+    private Long vasId;
 
     @Column(name = "service_name")
-    private String serviceName;
+    private String vasName;
 
     @Column(name = "price")
     private Integer price;
@@ -27,7 +27,7 @@ public class Vas extends TimeStamp {
     private String imageUrl;
 
     @Column(name = "service_description")
-    private String serviceDescription;
+    private String vasDescription;
 
     @Column(name = "sale_rate")
     private Integer saleRate;
