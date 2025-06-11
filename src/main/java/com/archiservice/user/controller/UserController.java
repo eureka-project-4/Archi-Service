@@ -84,7 +84,7 @@ public class UserController {
         return ResponseEntity.ok(contractService.getContract(NEXT, user));
     }
 
-    @PutMapping("/next")
+    @PutMapping("/next/cancel")
     public ResponseEntity<ApiResponse> cancelNextReservation(@AuthenticationPrincipal CustomUser user) {
         return ResponseEntity.ok(contractService.cancelNextReservation(user));
     }
