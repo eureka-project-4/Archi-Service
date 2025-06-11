@@ -1,12 +1,14 @@
 package com.archiservice.survey.service.impl;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
 import com.archiservice.code.tagmeta.service.TagMetaService;
 import com.archiservice.common.response.ApiResponse;
+import com.archiservice.common.security.JwtUtil;
 import com.archiservice.exception.BusinessException;
 import com.archiservice.exception.ErrorCode;
 import com.archiservice.survey.domain.Question;
@@ -26,6 +28,7 @@ public class SurveyServiceImpl implements SurveyService{
 	private final QuestionRepository questionRepository;
 	private final UserRepository userRepository;
 	private final TagMetaService metaService;
+	private final JwtUtil jwtUtil;
 	
 	@Override
 	public ApiResponse<QuestionResponseDto> getQuestion(Long nextQuestionId, Long tagCode, HttpSession session) {
@@ -78,8 +81,14 @@ public class SurveyServiceImpl implements SurveyService{
 
 		user.setTagCode(tagCode);
 		userRepository.save(user);
+		
+		// JWT tagCode 정보 삽입
+		Map<String, Object> claims = new HashMap<>();
+		claims.put("tagCdoe", tagCode);
+		String tagCodeAccessToken = jwtUtil.generateCustomToken(claims, user.getEmail());
+		
 		session.removeAttribute("tagCodes");
-		return ApiResponse.success("성향 저장");
+		return ApiResponse.success(tagCodeAccessToken);
 	}
 	
 	
