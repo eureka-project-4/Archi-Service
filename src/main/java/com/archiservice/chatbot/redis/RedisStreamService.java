@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class RedisStreamService {
 
-  private final StreamOperations<String, Object, Object> streamOperations;
+  private StreamOperations<String, String, String> streamOperations;
   private final ObjectMapper objectMapper;
 
   public void sendToAI(AiPromptMessage aiPromptMessage) {
