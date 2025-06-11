@@ -18,12 +18,12 @@ public class VasController {
     private final VasService vasService;
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<VasResponseDto>>> getAllVASs() {
-        return ResponseEntity.ok(ApiResponse.success(vasService.getAllVASs()));
+    public ResponseEntity<ApiResponse<List<VasResponseDto>>> getAllVas() {
+        return ResponseEntity.ok(ApiResponse.success(vasService.getAllVas()));
     }
 
-    @GetMapping("/{serviceId}")
-    public ResponseEntity<ApiResponse<VasDetailResponseDto>> getVASDetail(@PathVariable("serviceId") Long serviceId) {
-        return ResponseEntity.ok(ApiResponse.success(vasService.getVASDetail(serviceId)));
+    @GetMapping("/{vasId}")
+    public ResponseEntity<ApiResponse<VasDetailResponseDto>> getVasDetail(@PathVariable("vasId") Long vasId) {
+        return ResponseEntity.ok(ApiResponse.success(vasService.getVasDetail(vasId)));
     }
 }

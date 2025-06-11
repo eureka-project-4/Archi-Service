@@ -1,16 +1,15 @@
 package com.archiservice.user.domain;
 
+import com.archiservice.product.bundle.domain.ProductBundle;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Getter
 @NoArgsConstructor
-@EntityListeners(AuditingEntityListener.class)
 @Table(name = "contracts")
 public class Contract {
     @Id
@@ -18,10 +17,9 @@ public class Contract {
     @Column(name = "contract_id")
     private Long id;
 
-    // 아직 없음
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "product_bundle_id")
-//    private ProductBundle bundleId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_bundle_id")
+    private ProductBundle productBundle;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
@@ -31,4 +29,10 @@ public class Contract {
     private Long price;
     private LocalDateTime startDate;
     private LocalDateTime endDate;
+
+    public void copyFrom(Contract contract) {
+        this.paymentMethod = contract.paymentMethod;
+        this.price = contract.price;
+        this.productBundle = contract.productBundle;
+    }
 }

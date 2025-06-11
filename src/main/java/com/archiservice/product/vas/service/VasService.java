@@ -6,6 +6,6 @@ import com.archiservice.product.vas.dto.response.VasResponseDto;
 import java.util.List;
 
 public interface VasService {
-    List<VasResponseDto> getAllVASs();
-    VasDetailResponseDto getVASDetail(Long serviceId);
+    List<VasResponseDto> getAllVas();
+    VasDetailResponseDto getVasDetail(Long vasId);
 }
