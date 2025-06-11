@@ -27,7 +27,7 @@ public class VasServiceImpl implements VasService {
     public static final String CATEGORY_GROUP_CODE = "G03"; // 부가 서비스
 
     @Override
-    public List<VasResponseDto> getAllVASs() {
+    public List<VasResponseDto> getAllVas() {
         return vasRepository.findAll().stream()
                 .map(vas -> {
                     List<String> tags = tagMetaService.extractTagsFromCode(vas.getTagCode());
@@ -38,8 +38,8 @@ public class VasServiceImpl implements VasService {
     }
 
     @Override
-    public VasDetailResponseDto getVASDetail(Long serviceId) {
-        Vas vas = vasRepository.findById(serviceId)
+    public VasDetailResponseDto getVasDetail(Long vasId) {
+        Vas vas = vasRepository.findById(vasId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.PRODUCT_NOT_FOUND));
 
         List<String> tags = tagMetaService.extractTagsFromCode(vas.getTagCode());

@@ -9,8 +9,8 @@ import java.util.List;
 @Getter
 @Builder
 public class VasResponseDto {
-    private Long serviceId;
-    private String serviceName;
+    private Long vasId;
+    private String vasName;
     private Integer price;
     private Integer discountedPrice;
     private Integer saleRate;
@@ -20,8 +20,8 @@ public class VasResponseDto {
 
     public static VasResponseDto from(Vas vas, List<String> tags, String category) {
         return VasResponseDto.builder()
-                .serviceId(vas.getVasId())
-                .serviceName(vas.getVasName())
+                .vasId(vas.getVasId())
+                .vasName(vas.getVasName())
                 .price(vas.getPrice())
                 .discountedPrice(vas.getDiscountedPrice())
                 .saleRate(vas.getSaleRate())
