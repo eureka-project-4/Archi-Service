@@ -13,22 +13,22 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "service_reviews")
+@Table(name = "vas_reviews")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class VasReview extends TimeStamp {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "service_review_id")
-    private Long serviceReviewId;
+    @Column(name = "vas_review_id")
+    private Long vasReviewId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "service_id", nullable = false)
+    @JoinColumn(name = "vas_id", nullable = false)
     private Vas vas;
 
     @Column(name = "score", nullable = false)

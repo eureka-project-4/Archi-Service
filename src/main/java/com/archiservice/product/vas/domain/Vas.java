@@ -9,16 +9,16 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "services")
+@Table(name = "vass")
 public class Vas extends TimeStamp {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "service_id")
-    private Long serviceId;
+    @Column(name = "vas_id")
+    private Long vasId;
 
-    @Column(name = "service_name")
-    private String serviceName;
+    @Column(name = "vas_name")
+    private String vasName;
 
     @Column(name = "price")
     private Integer price;
@@ -26,8 +26,8 @@ public class Vas extends TimeStamp {
     @Column(name = "image_url")
     private String imageUrl;
 
-    @Column(name = "service_description")
-    private String serviceDescription;
+    @Column(name = "vas_description")
+    private String vasDescription;
 
     @Column(name = "sale_rate")
     private Integer saleRate;

@@ -6,8 +6,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface VasReviewService {
-    VasReviewResponseDto createReview(Long userId, Long serviceId, VasReviewRequestDto requestDto);
+    VasReviewResponseDto createReview(Long userId, Long vasId, VasReviewRequestDto requestDto);
     VasReviewResponseDto updateReview(Long userId, Long reviewId, VasReviewRequestDto requestDto);
     void deleteReview(Long userId, Long reviewId);
-    Page<VasReviewResponseDto> getReviewsByServiceId(Long serviceId, Pageable pageable);
+    Page<VasReviewResponseDto> getReviewsByVasId(Long vasId, Pageable pageable);
 }

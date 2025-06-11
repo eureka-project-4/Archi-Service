@@ -47,10 +47,10 @@ public class ContractDetailResponseDto {
                 .callUsage(planDto.getCallUsage())
                 .messageUsage(planDto.getMessageUsage())
 
-                .vasName(vasDto.getServiceName())
+                .vasName(vasDto.getVasName())
                 .vasPrice(vasDto.getPrice())
                 .vasCategory(vasDto.getCategory())
-                .vasDescription(vasDto.getServiceDescription())
+                .vasDescription(vasDto.getVasDescription())
                 .saleRate(vasDto.getSaleRate())
 
                 .couponName(couponDto.getCouponName())

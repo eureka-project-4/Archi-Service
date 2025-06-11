@@ -11,8 +11,8 @@ import org.springframework.data.repository.query.Param;
 
 public interface VasReviewRepository extends JpaRepository<VasReview, Long> {
 
-    @Query("SELECT vr FROM VasReview vr JOIN FETCH vr.user WHERE vr.vas.serviceId = :serviceId ORDER BY vr.createdAt DESC")
-    Page<VasReview> findByServiceIdWithUser(@Param("serviceId") Long serviceId, Pageable pageable);
+    @Query("SELECT vr FROM VasReview vr JOIN FETCH vr.user WHERE vr.vas.vasId = :vasId ORDER BY vr.createdAt DESC")
+    Page<VasReview> findByVasIdWithUser(@Param("vasId") Long vasId, Pageable pageable);
 
     boolean existsByUserAndVas(User user, Vas vas);
 

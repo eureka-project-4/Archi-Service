@@ -29,11 +29,11 @@ public class VasReviewServiceImpl implements VasReviewService {
     private final VasRepository vasRepository;
 
     @Transactional
-    public VasReviewResponseDto createReview(Long userId, Long serviceId, VasReviewRequestDto requestDto) {
+    public VasReviewResponseDto createReview(Long userId, Long vasId, VasReviewRequestDto requestDto) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(ErrorCode.USER_NOT_FOUND.getMessage()));
 
-        Vas vas = vasRepository.findById(serviceId)
+        Vas vas = vasRepository.findById(vasId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.PRODUCT_NOT_FOUND));
 
         // 중복 리뷰 검사
@@ -72,8 +72,8 @@ public class VasReviewServiceImpl implements VasReviewService {
         vasReviewRepository.delete(review);
     }
 
-    public Page<VasReviewResponseDto> getReviewsByServiceId(Long serviceId, Pageable pageable) {
-        Page<VasReview> reviews = vasReviewRepository.findByServiceIdWithUser(serviceId, pageable);
+    public Page<VasReviewResponseDto> getReviewsByVasId(Long vasId, Pageable pageable) {
+        Page<VasReview> reviews = vasReviewRepository.findByVasIdWithUser(vasId, pageable);
         return reviews.map(VasReviewResponseDto::from);
     }
 

@@ -52,7 +52,7 @@ public class ContractServiceImpl implements ContractService {
         Long vasId = contractRepository.findVasIdByOffset(user.getUserId(), period.getOffset())
                 .orElseThrow(() -> new BusinessException(ErrorCode.PRODUCT_NOT_FOUND));
 
-        VasDetailResponseDto vasDetailResponseDto = vasService.getVASDetail(vasId);
+        VasDetailResponseDto vasDetailResponseDto = vasService.getVasDetail(vasId);
 
         return ApiResponse.success(vasDetailResponseDto);
     }
@@ -83,7 +83,7 @@ public class ContractServiceImpl implements ContractService {
         Long vasId = contractRepository.findVasIdByOffset(user.getUserId(), period.getOffset())
                 .orElseThrow(() -> new BusinessException(ErrorCode.PRODUCT_NOT_FOUND));
 
-        VasDetailResponseDto vasDetailResponseDto = vasService.getVASDetail(vasId);
+        VasDetailResponseDto vasDetailResponseDto = vasService.getVasDetail(vasId);
 
         Long couponId = contractRepository.findCouponIdByOffset(user.getUserId(), period.getOffset())
                 .orElseThrow(() -> new BusinessException(ErrorCode.PRODUCT_NOT_FOUND));

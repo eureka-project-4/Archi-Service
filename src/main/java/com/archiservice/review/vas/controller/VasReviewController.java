@@ -16,7 +16,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/vass/{serviceId}/reviews")
+@RequestMapping("/vass/{vasId}/reviews")
 @RequiredArgsConstructor
 public class VasReviewController {
 
@@ -24,18 +24,18 @@ public class VasReviewController {
 
     @PostMapping
     public ResponseEntity<ApiResponse<VasReviewResponseDto>> createReview(
-            @PathVariable("serviceId") Long serviceId,
+            @PathVariable("vasId") Long vasId,
             @RequestBody @Valid VasReviewRequestDto requestDto,
             @AuthenticationPrincipal CustomUser customUser) {
 
         Long userId = customUser.getId();
         return ResponseEntity.ok(ApiResponse.success("리뷰 작성에 성공하였습니다.",
-                vasReviewService.createReview(userId, serviceId, requestDto)));
+                vasReviewService.createReview(userId, vasId, requestDto)));
     }
 
     @GetMapping
     public ResponseEntity<ApiResponse<Page<VasReviewResponseDto>>> getReviews(
-            @PathVariable("serviceId") Long serviceId,
+            @PathVariable("vasId") Long vasId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "createdAt") String sort,
@@ -43,14 +43,14 @@ public class VasReviewController {
 
         Pageable pageable = PageRequest.of(page, size,
                 Sort.by(Sort.Direction.fromString(direction), sort));
-        Page<VasReviewResponseDto> reviews = vasReviewService.getReviewsByServiceId(serviceId, pageable);
+        Page<VasReviewResponseDto> reviews = vasReviewService.getReviewsByVasId(vasId, pageable);
 
         return ResponseEntity.ok(ApiResponse.success("리뷰 전체조회에 성공하였습니다.", reviews));
     }
 
     @PutMapping("/{reviewId}")
     public ResponseEntity<ApiResponse<VasReviewResponseDto>> updateReview(
-            @PathVariable("serviceId") Long serviceId,
+            @PathVariable("vasId") Long vasId,
             @PathVariable("reviewId") Long reviewId,
             @RequestBody @Valid VasReviewRequestDto requestDto,
             @AuthenticationPrincipal CustomUser customUser) {
@@ -62,7 +62,7 @@ public class VasReviewController {
 
     @DeleteMapping("/{reviewId}")
     public ResponseEntity<ApiResponse<Void>> deleteReview(
-            @PathVariable("serviceId") Long serviceId,
+            @PathVariable("vasId") Long vasId,
             @PathVariable("reviewId") Long reviewId,
             @AuthenticationPrincipal CustomUser customUser) {
 

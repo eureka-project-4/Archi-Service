@@ -12,8 +12,8 @@ public class VasReviewResponseDto {
     private Long reviewId;
     private Long userId;
     private String username;
-    private Long serviceId;
-    private String serviceName;
+    private Long vasId;
+    private String vasName;
     private Integer score;
     private String content;
     private LocalDateTime createdAt;
@@ -21,11 +21,11 @@ public class VasReviewResponseDto {
 
     public static VasReviewResponseDto from(VasReview review) {
         return VasReviewResponseDto.builder()
-                .reviewId(review.getServiceReviewId())
+                .reviewId(review.getVasReviewId())
                 .userId(review.getUser().getUserId())
                 .username(review.getUser().getUsername())
-                .serviceId(review.getVas().getServiceId())
-                .serviceName(review.getVas().getServiceName())
+                .vasId(review.getVas().getVasId())
+                .vasName(review.getVas().getVasName())
                 .score(review.getScore())
                 .content(review.getContent())
                 .createdAt(review.getCreatedAt())
