@@ -36,7 +36,7 @@ public class ProductBundle {
     private Coupon coupon;
 
     private long likeCount;
-    private long disLikeCount;
+    private long dislikeCount;
     private long tagCode;
 
     @CreatedDate
