@@ -59,14 +59,6 @@ public class RedisConfig {
     }
 
     @Bean
-    public RedisTemplate<String, String> stringRedisTemplate() {
-        RedisTemplate<String, String> template = new RedisTemplate<>();
-        template.setConnectionFactory(redisConnectionFactory());
-        template.setDefaultSerializer(new StringRedisSerializer());
-        return template;
-    }
-
-    @Bean
     public StreamOperations<String, Object, Object> streamOperations() {
         return redisTemplate().opsForStream();
     }
