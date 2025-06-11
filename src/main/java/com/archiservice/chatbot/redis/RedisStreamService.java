@@ -3,6 +3,7 @@ package com.archiservice.chatbot.redis;
 import com.archiservice.chatbot.dto.request.AiPromptMessage;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.HashMap;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.connection.stream.RecordId;
@@ -18,10 +19,9 @@ public class RedisStreamService {
 
   public void sendToAI(AiPromptMessage aiPromptMessage) {
     try {
-      String json = objectMapper.writeValueAsString(aiPromptMessage);
-      System.out.println("Redis로 보낼 JSON: " + json);
-
-      Map<String, Object> messageMap = Map.of("data", json);
+      Map<String, String> messageMap = new HashMap<>();
+      messageMap.put("metadata", objectMapper.writeValueAsString(aiPromptMessage.getMetadata()));
+      messageMap.put("payload", objectMapper.writeValueAsString(aiPromptMessage.getPayload()));
 
       RecordId recordId = streamOperations.add("ai-request-stream", messageMap);
       System.out.println("Redis Stream 전송 완료: " + recordId);
