@@ -16,4 +16,13 @@ public interface PlanReviewRepository extends JpaRepository<PlanReview, Long> {
     Page<PlanReview> findByPlanIdWithUser(@Param("planId") Long planId, Pageable pageable);
 
     boolean existsByUserAndPlan(User user, Plan plan);
+
+    int countPlanReviewByPlan(Plan plan);
+
+    @Query("SELECT AVG(r.score) FROM PlanReview r WHERE r.plan = :plan")
+    Double getAverageRatingByPlan(@Param("plan") Plan plan);
+
+    @Query("SELECT AVG(r.score) FROM PlanReview r WHERE r.plan IS NOT NULL")
+    Double findAverageRatingByPlanIsNotNull();
+
 }

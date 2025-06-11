@@ -1,5 +1,6 @@
 package com.archiservice.review.vas.repository;
 
+import com.archiservice.product.plan.domain.Plan;
 import com.archiservice.review.vas.domain.VasReview;
 import com.archiservice.product.vas.domain.Vas;
 import com.archiservice.user.domain.User;
@@ -15,6 +16,14 @@ public interface VasReviewRepository extends JpaRepository<VasReview, Long> {
     Page<VasReview> findByVasIdWithUser(@Param("vasId") Long vasId, Pageable pageable);
 
     boolean existsByUserAndVas(User user, Vas vas);
+
+    int countVasReviewByVas(Vas vas);
+
+    @Query("SELECT AVG(r.score) FROM VasReview r WHERE r.vas = :vas")
+    Double getAverageRatingByVas(@Param("vas") Vas vas);
+
+    @Query("SELECT AVG(r.score) FROM VasReview r WHERE r.vas IS NOT NULL")
+    Double findAverageRatingByVasIsNotNull();
 
 }
 
