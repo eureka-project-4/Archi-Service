@@ -1,4 +1,4 @@
-package com.archiservice.review.vas.service;
+package com.archiservice.review.vas.service.impl;
 
 import com.archiservice.exception.BusinessException;
 import com.archiservice.exception.ErrorCode;
@@ -11,6 +11,7 @@ import com.archiservice.review.vas.domain.VasReview;
 import com.archiservice.review.vas.dto.request.VasReviewRequestDto;
 import com.archiservice.review.vas.dto.response.VasReviewResponseDto;
 import com.archiservice.review.vas.repository.VasReviewRepository;
+import com.archiservice.review.vas.service.VasReviewService;
 import com.archiservice.user.domain.User;
 import com.archiservice.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
