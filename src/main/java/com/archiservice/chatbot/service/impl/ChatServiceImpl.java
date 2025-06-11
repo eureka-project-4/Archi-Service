@@ -1,12 +1,13 @@
 package com.archiservice.chatbot.service.impl;
 
 
+import com.archiservice.chatbot.domain.AuthInfo;
 import com.archiservice.chatbot.domain.Chat;
 import com.archiservice.chatbot.dto.ChatMessageDto;
 import com.archiservice.chatbot.dto.type.MessageType;
 import com.archiservice.chatbot.dto.type.Sender;
 import com.archiservice.chatbot.repository.ChatRepository;
-import com.archiservice.chatbot.service.AIService;
+import com.archiservice.chatbot.service.AiService;
 import com.archiservice.chatbot.service.ChatService;
 import com.archiservice.exception.BusinessException;
 import com.archiservice.exception.ErrorCode;
@@ -14,7 +15,6 @@ import com.archiservice.user.domain.User;
 import com.archiservice.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import java.time.Duration;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -35,12 +35,12 @@ public class ChatServiceImpl implements ChatService {
     private final ChatRepository chatRepository;
     private final UserRepository userRepository;
     private final SimpMessagingTemplate messagingTemplate;
-    private final RedisTemplate<String, Object> redisTemplate;
-    private final AIService aiService;
+    private final RedisTemplate<String, ChatMessageDto> chatMessageRedisTemplate;
+    private final AiService aiService;
 
     @Override
-    public void handleUserMessage(ChatMessageDto message, Long userId) {
-        User user = userRepository.findById(userId)
+    public void handleUserMessage(ChatMessageDto message, AuthInfo authInfo) {
+        User user = userRepository.findById(authInfo.getUserId())
             .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
         Chat chat = Chat.builder()
@@ -51,28 +51,40 @@ public class ChatServiceImpl implements ChatService {
             .build();
         Chat savedChat = chatRepository.save(chat);
 
-        String key = "chat:user:" + userId;
-        redisTemplate.opsForList().leftPush(key, ChatMessageDto.fromChat(chat));
-        redisTemplate.expire(key, Duration.ofHours(24));
+        String key = "chat:user:" + authInfo.getUserId();
+        chatMessageRedisTemplate.opsForList().leftPush(key, ChatMessageDto.fromChat(chat));
+        chatMessageRedisTemplate.expire(key, Duration.ofHours(24));
 
         messagingTemplate.convertAndSendToUser(
-            String.valueOf(userId),
+            String.valueOf(authInfo.getUserId()),
             "/queue/chat",
             message
         );
 
-        aiService.sendMessageToAI(savedChat);
+        aiService.sendMessageToAI(savedChat, authInfo);
     }
 
     @Override
     public List<ChatMessageDto> loadChatHistory(Long userId, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        String key = "chat:user:" + userId;
+
+        List<ChatMessageDto> cached = chatMessageRedisTemplate.opsForList().range(key, 0, -1);
+
+        if (cached != null && !cached.isEmpty()) {
+            int from = page * size;
+            int to = Math.min(from + size, cached.size());
+
+            if (from < cached.size()) {
+                return cached.subList(from, to).stream()
+                    .sorted(Comparator.comparing(ChatMessageDto::getTimestamp))
+                    .collect(Collectors.toList());
+            }
+        }
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").ascending());
         Page<Chat> chatPage = chatRepository.findByUser_UserId(userId, pageable);
 
-        List<Chat> chats = new ArrayList<>(chatPage.getContent());
-        chats.sort(Comparator.comparing(Chat::getCreatedAt));
-
-        return chats.stream()
+        return chatPage.stream()
             .map(ChatMessageDto::fromChat)
             .collect(Collectors.toList());
     }

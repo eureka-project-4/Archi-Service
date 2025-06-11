@@ -1,29 +1,24 @@
 package com.archiservice.chatbot.service.impl;
 
-import static com.archiservice.chatbot.dto.type.MessageType.KEYWORD_RECOMMENDATION;
-import static com.archiservice.chatbot.dto.type.MessageType.PREFERENCE_UPDATE;
-import static com.archiservice.chatbot.dto.type.MessageType.SUGGESTION;
-
+import com.archiservice.chatbot.domain.AuthInfo;
 import com.archiservice.chatbot.domain.Chat;
+import com.archiservice.chatbot.dto.AiMessage;
+import com.archiservice.chatbot.dto.AuthMetadata;
 import com.archiservice.chatbot.dto.ChatMessageDto;
 import com.archiservice.chatbot.dto.ChatResponseDto;
-import com.archiservice.chatbot.dto.type.MessageType;
 import com.archiservice.chatbot.dto.type.Sender;
 import com.archiservice.chatbot.redis.RedisStreamService;
 import com.archiservice.chatbot.repository.ChatRepository;
-import com.archiservice.chatbot.service.AIService;
+import com.archiservice.chatbot.service.AiService;
 import com.archiservice.user.domain.User;
 import com.archiservice.user.repository.UserRepository;
-import java.time.LocalDateTime;
-import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class AIServiceImpl implements AIService {
+public class AiServiceImpl implements AiService {
 
   private final ChatRepository chatRepository;
   private final UserRepository userRepository;
@@ -31,9 +26,13 @@ public class AIServiceImpl implements AIService {
   private final RedisStreamService redisStreamService;
 
   @Override
-  public void sendMessageToAI(Chat chat) {
+  public void sendMessageToAI(Chat chat, AuthInfo authInfo) {
     ChatMessageDto requestDto = ChatMessageDto.fromChat(chat);
-    redisStreamService.sendToAI(requestDto);
+
+    AuthMetadata metadata = new AuthMetadata(authInfo.getTagCode(), authInfo.getAgeCode());
+    AiMessage aiMessage = new AiMessage(metadata, requestDto);
+
+    redisStreamService.sendToAI(aiMessage);
   }
 
   @Override

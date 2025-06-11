@@ -1,7 +1,9 @@
 package com.archiservice.common.config;
 
+import com.archiservice.chatbot.dto.ChatMessageDto;
 import java.time.Duration;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.cache.CacheProperties.Redis;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -67,5 +69,16 @@ public class RedisConfig {
     @Bean
     public StreamOperations<String, Object, Object> streamOperations() {
         return redisTemplate().opsForStream();
+    }
+
+    @Bean
+    public RedisTemplate<String, ChatMessageDto> chatMessageRedisTemplate(RedisConnectionFactory connectionFactory) {
+        RedisTemplate<String, ChatMessageDto> template = new RedisTemplate<>();
+        template.setConnectionFactory(connectionFactory);
+
+        template.setKeySerializer(new StringRedisSerializer());
+        template.setValueSerializer(new GenericJackson2JsonRedisSerializer());
+
+        return template;
     }
 }

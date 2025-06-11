@@ -1,7 +1,7 @@
 package com.archiservice.chatbot.redis;
 
 import com.archiservice.chatbot.dto.ChatResponseDto;
-import com.archiservice.chatbot.service.AIService;
+import com.archiservice.chatbot.service.AiService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
 import java.util.Map;
@@ -20,7 +20,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class RedisStreamConsumer {
 
-  private final AIService aiService;
+  private final AiService aiService;
   private final StreamMessageListenerContainer<String, MapRecord<String, String, String>> streamContainer;
   private final StreamOperations<String, Object, Object> streamOperations;
   private final ObjectMapper objectMapper;

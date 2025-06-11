@@ -1,7 +1,7 @@
 package com.archiservice.chatbot.domain;
 
-import com.archiservice.chatbot.dto.type.Sender;
 import com.archiservice.chatbot.dto.type.MessageType;
+import com.archiservice.chatbot.dto.type.Sender;
 import com.archiservice.user.domain.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
