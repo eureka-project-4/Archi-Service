@@ -35,18 +35,9 @@ public class BadWordFilterService {
             log.info("불용어 {} 개 로드 완료", wordsFromFile.size());
             return wordsFromFile;
         } catch (IOException e) {
-            log.error("불용어 파일 로드 실패, 기본 불용어 사용", e);
-            return getDefaultBadWords();  // 폴백
+            log.error("불용어 파일 로드 실패");
+            return Collections.emptySet();
         }
-    }
-
-    private Set<String> getDefaultBadWords() {
-        return Set.of(
-                "욕설", "바보", "멍청이", "쓰레기", "개같은",
-                "시발", "씨발", "병신", "새끼", "개새끼",
-                "죽어", "꺼져", "닥쳐", "미친", "또라이",
-                "븅신", "ㅂㅅ", "ㅅㅂ", "ㅄ", "ㅈㄹ"
-        );
     }
 
     public boolean containsBadWord(String content) {
