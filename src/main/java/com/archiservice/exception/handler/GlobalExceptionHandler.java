@@ -1,14 +1,19 @@
 package com.archiservice.exception.handler;
 
 import com.archiservice.common.response.ApiResponse;
+import com.archiservice.common.response.ValidationErrorResponse;
 import com.archiservice.exception.BusinessException;
 import com.archiservice.exception.ErrorCode;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -21,6 +26,28 @@ public class GlobalExceptionHandler {
 
     log.error("Business error at {}: {}", request.getRequestURI(), e.getMessage(), e);
     return ResponseEntity.ok(ApiResponse.fail(e.getErrorCode()));
+  }
+
+  @ExceptionHandler(MethodArgumentNotValidException.class)
+  public ResponseEntity<ApiResponse<ValidationErrorResponse>> handleValidationExceptions(
+          MethodArgumentNotValidException ex) {
+
+    log.warn("Validation error: {}", ex.getMessage());
+
+    Map<String, String> errors = new HashMap<>();
+    ex.getBindingResult().getFieldErrors().forEach(error ->
+            errors.put(error.getField(), error.getDefaultMessage())
+    );
+
+    ValidationErrorResponse errorResponse = ValidationErrorResponse.of(errors);
+
+    return ResponseEntity.badRequest()
+            .body(new ApiResponse<>(
+                    ErrorCode.INVALID_INPUT_VALUE.getStatus().value(),
+                    ErrorCode.INVALID_INPUT_VALUE.getCode(),
+                    ErrorCode.INVALID_INPUT_VALUE.getMessage(),
+                    errorResponse
+            ));
   }
 
   @ExceptionHandler(Exception.class)
