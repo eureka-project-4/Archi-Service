@@ -46,15 +46,12 @@ public class SurveyServiceImpl implements SurveyService{
 		
 	    session.setAttribute("tagCodeSum", tagCodeSum);
 	    
-	    System.out.println("누적 태그코드 합: " + tagCodeSum);
-	    
 		Question question;
 		
 		if (nextQuestionId == null) {
 			// 성향 테스트 종료 지점
 			List<String> tagCodes = metaService.extractTagsFromCode(tagCodeSum);
 			session.setAttribute("tagCodes", tagCodes);
-			System.out.println(tagCodes);
 			return ApiResponse.success(new QuestionResponseDto("성향 테스트 종료", 0, List.of()));
 			
 		}else {
