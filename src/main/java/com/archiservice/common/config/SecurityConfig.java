@@ -1,8 +1,8 @@
 package com.archiservice.common.config;
 
 import com.archiservice.common.security.CustomUserDetailsService;
-import com.archiservice.common.security.JwtAuthenticationFilter;
-import com.archiservice.common.security.JwtUtil;
+import com.archiservice.common.jwt.JwtAuthenticationFilter;
+import com.archiservice.common.jwt.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

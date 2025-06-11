@@ -1,5 +1,6 @@
-package com.archiservice.common.security;
+package com.archiservice.common.jwt;
 
+import com.archiservice.common.security.CustomUserDetailsService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

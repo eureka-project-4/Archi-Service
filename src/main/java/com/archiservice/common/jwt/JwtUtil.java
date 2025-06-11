@@ -1,4 +1,4 @@
-package com.archiservice.common.security;
+package com.archiservice.common.jwt;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;

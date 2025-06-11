@@ -1,4 +1,4 @@
-package com.archiservice.websocket.config;
+package com.archiservice.chatbot.websocket;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

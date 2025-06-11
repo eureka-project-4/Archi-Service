@@ -1,7 +1,7 @@
-package com.archiservice.chat.controller;
+package com.archiservice.chatbot.controller;
 
-import com.archiservice.chat.dto.response.ChatMessageDto;
-import com.archiservice.chat.service.ChatService;
+import com.archiservice.chatbot.dto.ChatMessageDto;
+import com.archiservice.chatbot.service.ChatService;
 import com.archiservice.common.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -25,10 +25,10 @@ public class ChatController {
         return ResponseEntity.ok(ApiResponse.success("성공했습니다.", data));
     }
 
-    @DeleteMapping("/delete/{userId}")
-    public ResponseEntity<ApiResponse<String>> deleteChatHistory(@PathVariable("userId") Long userId) {
+    @DeleteMapping("/clear/{userId}")
+    public ResponseEntity<ApiResponse<String>> clearChatHistory(@PathVariable("userId") Long userId) {
         chatService.deleteChatByUserId(userId);
-        return ResponseEntity.ok(ApiResponse.success("성공했습니다.", "삭제 성공"));
+        return ResponseEntity.ok(ApiResponse.success("성공했습니다.", "채팅 기록 초기화 완료"));
     }
 
 

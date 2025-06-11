@@ -1,6 +1,6 @@
 package com.archiservice.common.security;
 
-import com.archiservice.common.redis.RedisService;
+import com.archiservice.common.jwt.RefreshTokenService;
 import com.archiservice.user.domain.User;
 import com.archiservice.user.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,7 +18,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 public class CustomUserDetailsService implements UserDetailsService {
 
     private final UserRepository userRepository;
-    private final RedisService redisService;
+    private final RefreshTokenService refreshTokenService;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -26,7 +26,7 @@ public class CustomUserDetailsService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다: " + email));
 
         if (isRefreshTokenRequest()) {
-            if (!redisService.hasRefreshToken(email)) {
+            if (!refreshTokenService.hasRefreshToken(email)) {
                 throw new UsernameNotFoundException("Refresh Token이 만료되었습니다. 다시 로그인해주세요.");
             }
         }
