@@ -13,10 +13,10 @@ import org.springframework.stereotype.Service;
 public class RedisStreamService {
 
   private final StreamOperations<String, Object, Object> streamOperations;
+  private final ObjectMapper objectMapper;
 
   public void sendToAI(AiPromptMessage aiPromptMessage) {
     try {
-      ObjectMapper objectMapper = new ObjectMapper();
       String json = objectMapper.writeValueAsString(aiPromptMessage);
 
       Map<String, Object> messageMap = Map.of(
