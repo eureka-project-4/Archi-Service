@@ -61,4 +61,8 @@ public class CustomUser implements UserDetails {
     public String getEmail() {
         return user.getEmail();
     }
+    
+    public Long getTagCode() {
+    	return user.getTagCode();
+    }
 }

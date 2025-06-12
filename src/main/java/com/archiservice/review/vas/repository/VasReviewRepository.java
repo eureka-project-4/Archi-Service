@@ -1,6 +1,5 @@
 package com.archiservice.review.vas.repository;
 
-import com.archiservice.product.plan.domain.Plan;
 import com.archiservice.review.vas.domain.VasReview;
 import com.archiservice.product.vas.domain.Vas;
 import com.archiservice.user.domain.User;
@@ -9,8 +8,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-
-import java.util.List;
 
 public interface VasReviewRepository extends JpaRepository<VasReview, Long> {
 

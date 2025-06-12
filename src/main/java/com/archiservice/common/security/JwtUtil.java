@@ -74,15 +74,18 @@ public class JwtUtil {
         return extractExpiration(token).before(new Date());
     }
 
-    public String generateAccessToken(UserDetails userDetails) {
+    public String generateAccessToken(CustomUser customUser) {
         Map<String, Object> claims = new HashMap<>();
-
-        return createToken(claims, userDetails.getUsername(), accessTokenExpiration);
+        claims.put("userId", customUser.getId());
+        claims.put("tagCode", customUser.getTagCode());
+        return createToken(claims, customUser.getUsername(), accessTokenExpiration);
     }
 
-    public String generateRefreshToken(String username) {
+    public String generateRefreshToken(CustomUser customUser) {
         Map<String, Object> claims = new HashMap<>();
-        return createToken(claims, username, refreshTokenExpiration);
+        claims.put("userId", customUser.getId());
+        claims.put("tagCode", customUser.getTagCode());
+        return createToken(claims, customUser.getUsername(), refreshTokenExpiration);
     }
 
     private String createToken(Map<String, Object> claims, String subject, Long expiration) {
@@ -113,5 +116,9 @@ public class JwtUtil {
             log.error("Token validation failed: {}", e.getMessage());
             return false;
         }
+    }
+    
+    public String generateCustomToken(Map<String, Object> claims, String subject) {
+    	return createToken(claims, subject, accessTokenExpiration);
     }
 }

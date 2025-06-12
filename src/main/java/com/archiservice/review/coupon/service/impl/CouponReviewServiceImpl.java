@@ -7,7 +7,6 @@ import com.archiservice.exception.business.ReviewNotFoundException;
 import com.archiservice.exception.business.UserNotFoundException;
 import com.archiservice.product.coupon.domain.Coupon;
 import com.archiservice.product.coupon.repository.CouponRepository;
-import com.archiservice.recommend.dto.response.ScoreResponseDto;
 import com.archiservice.review.coupon.domain.CouponReview;
 import com.archiservice.review.coupon.dto.request.CouponReviewRequestDto;
 import com.archiservice.review.coupon.dto.response.CouponReviewResponseDto;
@@ -20,10 +19,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
