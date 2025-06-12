@@ -45,7 +45,7 @@ public class AuthServiceImpl implements AuthService {
 
         CustomUser customUser = new CustomUser(user);
         String accessToken = jwtUtil.generateAccessToken(customUser);
-        String refreshToken = jwtUtil.generateRefreshToken(user.getEmail());
+        String refreshToken = jwtUtil.generateRefreshToken(customUser);
 
         redisService.saveRefreshToken(user.getEmail(), refreshToken);
 
@@ -63,9 +63,9 @@ public class AuthServiceImpl implements AuthService {
     public ApiResponse<RefreshResponseDto> refresh(String refreshTokenHeader) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        CustomUser customUser = (CustomUser) authentication.getPrincipal();
 
-        String newAccessToken = jwtUtil.generateAccessToken(userDetails);
+        String newAccessToken = jwtUtil.generateAccessToken(customUser);
 
         RefreshResponseDto responseDto = new RefreshResponseDto(email, newAccessToken);
 
