@@ -7,6 +7,7 @@ import com.archiservice.exception.business.ReviewNotFoundException;
 import com.archiservice.exception.business.UserNotFoundException;
 import com.archiservice.product.vas.domain.Vas;
 import com.archiservice.product.vas.repository.VasRepository;
+import com.archiservice.recommend.dto.response.ScoreResponseDto;
 import com.archiservice.review.vas.domain.VasReview;
 import com.archiservice.review.vas.dto.request.VasReviewRequestDto;
 import com.archiservice.review.vas.dto.response.VasReviewResponseDto;
@@ -19,6 +20,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -78,4 +83,16 @@ public class VasReviewServiceImpl implements VasReviewService {
         return reviews.map(VasReviewResponseDto::from);
     }
 
+    @Override
+    public Map<Long, ScoreResponseDto> getVasScoreStatistics() {
+        List<Object[]> results = vasReviewRepository.findAverageScoreAndCountByVas();
+        return results.stream()
+                .collect(Collectors.toMap(
+                        result -> (Long) result[0], // planId
+                        result -> new ScoreResponseDto(
+                                (Double) result[1],              // avgScore
+                                ((Long) result[2]).intValue()   // reviewCount
+                        )
+                ));
+    }
 }
