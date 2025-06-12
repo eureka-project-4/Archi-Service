@@ -1,6 +1,5 @@
 package com.archiservice.recommend.controller;
 
-
 import com.archiservice.common.response.ApiResponse;
 import com.archiservice.common.security.CustomUser;
 import com.archiservice.recommend.dto.response.RecommendCouponResponseDto;

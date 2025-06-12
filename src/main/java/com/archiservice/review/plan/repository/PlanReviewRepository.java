@@ -29,4 +29,10 @@ public interface PlanReviewRepository extends JpaRepository<PlanReview, Long> {
     @Query("SELECT pr.plan.planId, AVG(pr.score), COUNT(pr.score) FROM PlanReview pr WHERE pr.score IS NOT NULL GROUP BY pr.plan.planId")
     List<Object[]> findAverageScoreAndCountByPlan();
 
+    @Query(value = "SELECT AVG(review_count) FROM (" +
+            "SELECT COUNT(*) as review_count FROM plan_reviews GROUP BY plan_id" +
+            ") as plan_review_counts",
+            nativeQuery = true)
+    Double findAverageReviewCountPerPlanNative();
+
 }

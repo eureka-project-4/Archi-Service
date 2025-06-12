@@ -6,7 +6,6 @@ import com.archiservice.review.coupon.dto.response.CouponReviewResponseDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.util.List;
 import java.util.Map;
 
 public interface CouponReviewService {
@@ -16,5 +15,6 @@ public interface CouponReviewService {
     Page<CouponReviewResponseDto> getReviewsByCouponId(Long couponId, Pageable pageable);
 
     Map<Long, ScoreResponseDto> getCouponScoreStatistics();
+    Integer getAverageReviewCountPerCouponAsInteger();
 }
 

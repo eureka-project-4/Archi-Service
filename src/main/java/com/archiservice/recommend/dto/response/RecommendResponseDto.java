@@ -1,8 +1,6 @@
 package com.archiservice.recommend.dto.response;
 
-
 import com.archiservice.product.coupon.dto.response.CouponDetailResponseDto;
-import com.archiservice.product.plan.domain.Plan;
 import com.archiservice.product.plan.dto.response.PlanDetailResponseDto;
 import com.archiservice.product.vas.dto.response.VasDetailResponseDto;
 import lombok.AllArgsConstructor;
