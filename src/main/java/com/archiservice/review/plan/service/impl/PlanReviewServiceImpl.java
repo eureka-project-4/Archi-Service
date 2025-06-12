@@ -6,8 +6,8 @@ import com.archiservice.exception.business.ReviewNotFoundException;
 import com.archiservice.exception.business.UserNotFoundException;
 import com.archiservice.product.plan.domain.Plan;
 import com.archiservice.product.plan.repository.PlanRepository;
+import com.archiservice.recommend.dto.response.ScoreResponseDto;
 import com.archiservice.review.plan.domain.PlanReview;
-import com.archiservice.review.plan.dto.response.PlanScoreResponseDto;
 import com.archiservice.review.plan.dto.request.PlanReviewRequestDto;
 import com.archiservice.review.plan.dto.response.PlanReviewResponseDto;
 import com.archiservice.review.plan.repository.PlanReviewRepository;
@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.archiservice.exception.ErrorCode.*;
@@ -88,14 +89,15 @@ public class PlanReviewServiceImpl implements PlanReviewService {
     }
 
     @Override
-    public List<PlanScoreResponseDto> getPlanScoreStatistics() {
+    public Map<Long, ScoreResponseDto> getPlanScoreStatistics() {
         List<Object[]> results = planReviewRepository.findAverageScoreAndCountByPlan();
         return results.stream()
-                .map(result -> new PlanScoreResponseDto(
-                        (Long) result[0],           // planId
-                        (Double) result[1],         // avgScore
-                        ((Long) result[2]).intValue() // reviewCount
-                ))
-                .collect(Collectors.toList());
+                .collect(Collectors.toMap(
+                        result -> (Long) result[0], // planId
+                        result -> new ScoreResponseDto(
+                                (Double) result[1],              // avgScore
+                                ((Long) result[2]).intValue()   // reviewCount
+                        )
+                ));
     }
 }

@@ -1,12 +1,12 @@
 package com.archiservice.review.vas.service;
 
+import com.archiservice.recommend.dto.response.ScoreResponseDto;
 import com.archiservice.review.vas.dto.request.VasReviewRequestDto;
 import com.archiservice.review.vas.dto.response.VasReviewResponseDto;
-import com.archiservice.review.vas.dto.response.VasScoreResponseDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.util.List;
+import java.util.Map;
 
 public interface VasReviewService {
     VasReviewResponseDto createReview(Long userId, Long vasId, VasReviewRequestDto requestDto);
@@ -14,5 +14,5 @@ public interface VasReviewService {
     void deleteReview(Long userId, Long reviewId);
     Page<VasReviewResponseDto> getReviewsByVasId(Long vasId, Pageable pageable);
 
-    List<VasScoreResponseDto> getVasScoreStatistics();
+    Map<Long, ScoreResponseDto> getVasScoreStatistics();
 }

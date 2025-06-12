@@ -7,13 +7,12 @@ import com.archiservice.exception.business.ReviewNotFoundException;
 import com.archiservice.exception.business.UserNotFoundException;
 import com.archiservice.product.coupon.domain.Coupon;
 import com.archiservice.product.coupon.repository.CouponRepository;
+import com.archiservice.recommend.dto.response.ScoreResponseDto;
 import com.archiservice.review.coupon.domain.CouponReview;
 import com.archiservice.review.coupon.dto.request.CouponReviewRequestDto;
 import com.archiservice.review.coupon.dto.response.CouponReviewResponseDto;
-import com.archiservice.review.coupon.dto.response.CouponScoreResponseDto;
 import com.archiservice.review.coupon.repository.CouponReviewRepository;
 import com.archiservice.review.coupon.service.CouponReviewService;
-import com.archiservice.review.plan.dto.response.PlanScoreResponseDto;
 import com.archiservice.user.domain.User;
 import com.archiservice.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -84,14 +84,15 @@ public class CouponReviewServiceImpl implements CouponReviewService {
     }
 
     @Override
-    public List<CouponScoreResponseDto> getCouponScoreStatistics() {
+    public Map<Long, ScoreResponseDto> getCouponScoreStatistics() {
         List<Object[]> results = couponReviewRepository.findAverageScoreAndCountByCoupon();
         return results.stream()
-                .map(result -> new CouponScoreResponseDto(
-                        (Long) result[0],           // couponId
-                        (Double) result[1],         // avgScore
-                        ((Long) result[2]).intValue() // reviewCount
-                ))
-                .collect(Collectors.toList());
+                .collect(Collectors.toMap(
+                        result -> (Long) result[0], // planId
+                        result -> new ScoreResponseDto(
+                                (Double) result[1],              // avgScore
+                                ((Long) result[2]).intValue()   // reviewCount
+                        )
+                ));
     }
 }

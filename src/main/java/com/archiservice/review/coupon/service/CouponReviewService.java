@@ -1,12 +1,13 @@
 package com.archiservice.review.coupon.service;
 
+import com.archiservice.recommend.dto.response.ScoreResponseDto;
 import com.archiservice.review.coupon.dto.request.CouponReviewRequestDto;
 import com.archiservice.review.coupon.dto.response.CouponReviewResponseDto;
-import com.archiservice.review.coupon.dto.response.CouponScoreResponseDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.Map;
 
 public interface CouponReviewService {
     CouponReviewResponseDto createReview(Long userId, Long couponId, CouponReviewRequestDto requestDto);
@@ -14,6 +15,6 @@ public interface CouponReviewService {
     void deleteReview(Long userId, Long reviewId);
     Page<CouponReviewResponseDto> getReviewsByCouponId(Long couponId, Pageable pageable);
 
-    List<CouponScoreResponseDto> getCouponScoreStatistics();
+    Map<Long, ScoreResponseDto> getCouponScoreStatistics();
 }
 

@@ -7,11 +7,10 @@ import com.archiservice.exception.business.ReviewNotFoundException;
 import com.archiservice.exception.business.UserNotFoundException;
 import com.archiservice.product.vas.domain.Vas;
 import com.archiservice.product.vas.repository.VasRepository;
-import com.archiservice.review.plan.dto.response.PlanScoreResponseDto;
+import com.archiservice.recommend.dto.response.ScoreResponseDto;
 import com.archiservice.review.vas.domain.VasReview;
 import com.archiservice.review.vas.dto.request.VasReviewRequestDto;
 import com.archiservice.review.vas.dto.response.VasReviewResponseDto;
-import com.archiservice.review.vas.dto.response.VasScoreResponseDto;
 import com.archiservice.review.vas.repository.VasReviewRepository;
 import com.archiservice.review.vas.service.VasReviewService;
 import com.archiservice.user.domain.User;
@@ -23,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -84,14 +84,15 @@ public class VasReviewServiceImpl implements VasReviewService {
     }
 
     @Override
-    public List<VasScoreResponseDto> getVasScoreStatistics() {
+    public Map<Long, ScoreResponseDto> getVasScoreStatistics() {
         List<Object[]> results = vasReviewRepository.findAverageScoreAndCountByVas();
         return results.stream()
-                .map(result -> new VasScoreResponseDto(
-                        (Long) result[0],           // vasId
-                        (Double) result[1],         // avgScore
-                        ((Long) result[2]).intValue() // reviewCount
-                ))
-                .collect(Collectors.toList());
+                .collect(Collectors.toMap(
+                        result -> (Long) result[0], // planId
+                        result -> new ScoreResponseDto(
+                                (Double) result[1],              // avgScore
+                                ((Long) result[2]).intValue()   // reviewCount
+                        )
+                ));
     }
 }

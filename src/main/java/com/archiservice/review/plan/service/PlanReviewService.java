@@ -1,12 +1,12 @@
 package com.archiservice.review.plan.service;
 
-import com.archiservice.review.plan.dto.response.PlanScoreResponseDto;
+import com.archiservice.recommend.dto.response.ScoreResponseDto;
 import com.archiservice.review.plan.dto.request.PlanReviewRequestDto;
 import com.archiservice.review.plan.dto.response.PlanReviewResponseDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.util.List;
+import java.util.Map;
 
 public interface PlanReviewService {
     PlanReviewResponseDto createReview(Long userId, Long planId, PlanReviewRequestDto requestDto);
@@ -14,5 +14,5 @@ public interface PlanReviewService {
     void deleteReview(Long userId, Long reviewId);
     Page<PlanReviewResponseDto> getReviewsByPlanId(Long planId, Pageable pageable);
 
-    List<PlanScoreResponseDto> getPlanScoreStatistics();
+    Map<Long, ScoreResponseDto> getPlanScoreStatistics();
 }
