@@ -24,4 +24,5 @@ public interface ContractService {
     ReservationResponseDto cancelNextContract(CustomUser customUser); // 예약 취소 버튼을 누르면 예약을 이번달과 같게 하는 서비스
     ReservationResponseDto updateNextContract(ReservationRequestDto requestDto, CustomUser customUser); // 예약 변경 버튼을 누르면 예약을 해당 조합으로 바꾸는 서비스
 
+    void determineContractAction(ReservationRequestDto requestDto, CustomUser customUser);
 }

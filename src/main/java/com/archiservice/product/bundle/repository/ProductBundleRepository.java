@@ -16,7 +16,7 @@ import java.util.Optional;
 public interface ProductBundleRepository extends JpaRepository<ProductBundle, Long>{
 
     Optional<ProductBundle> findProductBundleByPlan_PlanIdAndVas_VasIdAndCoupon_CouponId(Long planId, Long vasId, Long couponId);
-    long findProductBundle_ProductBundleIdByPlanAndVasAndCoupon(Plan plan, Vas vas, Coupon coupon);
+    Optional<ProductBundle> findByPlanAndVasAndCoupon(Plan plan, Vas vas, Coupon coupon);
 
     @Modifying
     @Query("UPDATE ProductBundle pb SET pb.likeCount = pb.likeCount + 1 WHERE pb.productBundleId = :productBundleId")

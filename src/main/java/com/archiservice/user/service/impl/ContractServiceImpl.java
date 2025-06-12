@@ -27,6 +27,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -140,5 +141,21 @@ public class ContractServiceImpl implements ContractService {
         nextContract.updateNextContract(bundle, requestDto.getPrice());
 
         return null;
+    }
+
+    @Override
+    public void determineContractAction(ReservationRequestDto requestDto, CustomUser customUser) {
+        User user = userRepository.findById(customUser.getId())
+                .orElseThrow(() -> new UserNotFoundException());
+
+        Contract recentContract = contractRepository.findTop1ByUserOrderByIdDesc(user);
+        LocalDate today = LocalDate.now();
+        LocalDate endDate = recentContract.getEndDate().toLocalDate();
+
+        if(today.equals(endDate)) {
+            createContract(requestDto, user);
+        } else {
+            updateNextContract(requestDto, customUser);
+        }
     }
 }

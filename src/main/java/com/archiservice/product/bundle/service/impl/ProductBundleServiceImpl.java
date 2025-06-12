@@ -3,7 +3,6 @@ package com.archiservice.product.bundle.service.impl;
 import com.archiservice.common.security.CustomUser;
 import com.archiservice.exception.BusinessException;
 import com.archiservice.exception.ErrorCode;
-import com.archiservice.exception.business.UserNotFoundException;
 import com.archiservice.product.bundle.domain.ProductBundle;
 import com.archiservice.product.bundle.dto.request.CreateBundleRequestDto;
 import com.archiservice.product.bundle.dto.response.BundleCombinationResponseDto;
@@ -22,7 +21,6 @@ import com.archiservice.product.vas.domain.Vas;
 import com.archiservice.product.vas.dto.response.VasDetailResponseDto;
 import com.archiservice.product.vas.repository.VasRepository;
 import com.archiservice.product.vas.service.VasService;
-import com.archiservice.user.domain.User;
 import com.archiservice.user.dto.request.ReservationRequestDto;
 import com.archiservice.user.repository.UserRepository;
 import com.archiservice.user.service.ContractService;
@@ -51,9 +49,6 @@ public class ProductBundleServiceImpl implements ProductBundleService {
         // 1. 번들에 추가하게되면, 사용자의 계약건에도 추가되어야함.
         // 2. 조합이 기존에 존재하는 조합이라면 Bundle insert 건너뛰고, 사용자 계약건에 추가 ( 3번 )
         // 3. 등록 가능기간, 불가능 기간 모두 예약건으로 계약 테이블에 추가
-        User user = userRepository.findById(customUser.getId())
-                .orElseThrow(() -> new UserNotFoundException());
-
         Plan plan = planRepository.findById(requestDto.getPlanId())
                 .orElseThrow(() -> new BusinessException(ErrorCode.PRODUCT_NOT_FOUND, "요금제를 찾을 수 없음"));
 
@@ -65,16 +60,17 @@ public class ProductBundleServiceImpl implements ProductBundleService {
 
         long finalPrice = plan.getPrice() + vas.getDiscountedPrice() + coupon.getPrice();
 
-        if(productBundleRepository.existsByPlanAndVasAndCoupon(plan, vas, coupon)) {
+        Optional<ProductBundle> optBundle = productBundleRepository.findByPlanAndVasAndCoupon(plan, vas, coupon);
 
-            long bundleId = productBundleRepository.findProductBundle_ProductBundleIdByPlanAndVasAndCoupon(plan, vas, coupon);
+        if(optBundle.isPresent()) {
+            long bundleId = optBundle.get().getProductBundleId();
 
             ReservationRequestDto reservationRequestDto = ReservationRequestDto.builder()
                     .bundleId(bundleId)
                     .price(finalPrice)
                     .build();
 
-            contractService.createContract(reservationRequestDto, user);
+            contractService.determineContractAction(reservationRequestDto, customUser);
 
         } else{
             ProductBundle newProductBundle = ProductBundle.builder()
@@ -91,7 +87,7 @@ public class ProductBundleServiceImpl implements ProductBundleService {
                     .price(finalPrice)
                     .build();
 
-            contractService.createContract(reservationRequestDto, user);
+            contractService.determineContractAction(reservationRequestDto, customUser);
         }
 
 

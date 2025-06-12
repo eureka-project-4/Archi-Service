@@ -26,7 +26,7 @@ public class ProductBundleController {
     @PostMapping
     public ResponseEntity<ApiResponse<Void>> createBundle(@Valid @RequestBody CreateBundleRequestDto requestDto, @AuthenticationPrincipal CustomUser customUser) {
         bundleService.createBundle(requestDto, customUser);
-        return ResponseEntity.ok(ApiResponse.success("새로운 조합이 생성되었습니다.", null));
+        return ResponseEntity.ok(ApiResponse.success("선택하신 조합으로 예약이 갱신되었습니다.", null));
     }
 
     // ai 가 추천해준 조합이 최초의 조합이라면, bundle 테이블에 존재하지 않기 때문에 Session 에서 각 id 를 받아 각각 처리
