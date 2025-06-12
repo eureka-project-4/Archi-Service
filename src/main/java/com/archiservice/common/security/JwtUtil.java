@@ -117,4 +117,8 @@ public class JwtUtil {
             return false;
         }
     }
+    
+    public String generateCustomToken(Map<String, Object> claims, String subject) {
+    	return createToken(claims, subject, accessTokenExpiration);
+    }
 }
