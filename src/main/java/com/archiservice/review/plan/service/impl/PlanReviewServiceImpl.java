@@ -6,6 +6,7 @@ import com.archiservice.exception.business.ReviewNotFoundException;
 import com.archiservice.exception.business.UserNotFoundException;
 import com.archiservice.product.plan.domain.Plan;
 import com.archiservice.product.plan.repository.PlanRepository;
+import com.archiservice.recommend.dto.response.ScoreResponseDto;
 import com.archiservice.review.plan.domain.PlanReview;
 import com.archiservice.review.plan.dto.request.PlanReviewRequestDto;
 import com.archiservice.review.plan.dto.response.PlanReviewResponseDto;
@@ -18,6 +19,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static com.archiservice.exception.ErrorCode.*;
 

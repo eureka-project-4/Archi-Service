@@ -9,6 +9,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
+
 public interface CouponReviewRepository extends JpaRepository<CouponReview, Long> {
     @Query("SELECT cr FROM CouponReview cr JOIN FETCH cr.user WHERE cr.coupon.couponId = :couponId ORDER BY cr.createdAt DESC")
     Page<CouponReview> findByCouponIdWithUser(@Param("couponId") Long couponId, Pageable pageable);
