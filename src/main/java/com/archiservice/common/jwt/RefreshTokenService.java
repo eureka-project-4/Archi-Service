@@ -1,4 +1,4 @@
-package com.archiservice.common.redis;
+package com.archiservice.common.jwt;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,7 +11,7 @@ import java.time.Duration;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class RedisService {
+public class RefreshTokenService {
 
     private final StringRedisTemplate stringRedisTemplate;
 

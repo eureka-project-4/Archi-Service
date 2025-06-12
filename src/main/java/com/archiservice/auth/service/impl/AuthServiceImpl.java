@@ -5,10 +5,10 @@ import com.archiservice.auth.dto.response.LoginResponseDto;
 import com.archiservice.auth.dto.response.LogoutResponseDto;
 import com.archiservice.auth.dto.response.RefreshResponseDto;
 import com.archiservice.auth.service.AuthService;
-import com.archiservice.common.redis.RedisService;
+import com.archiservice.common.jwt.RefreshTokenService;
 import com.archiservice.common.response.ApiResponse;
 import com.archiservice.common.security.CustomUser;
-import com.archiservice.common.security.JwtUtil;
+import com.archiservice.common.jwt.JwtUtil;
 import com.archiservice.exception.business.InvalidPasswordException;
 import com.archiservice.exception.business.InvalidTokenException;
 import com.archiservice.exception.business.UserNotFoundException;
@@ -32,7 +32,7 @@ public class AuthServiceImpl implements AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
-    private final RedisService redisService;
+    private final RefreshTokenService refreshTokenService;
 
     @Override
     public ApiResponse<LoginResponseDto> login(LoginRequestDto loginRequest, HttpServletResponse response) {
@@ -47,7 +47,7 @@ public class AuthServiceImpl implements AuthService {
         String accessToken = jwtUtil.generateAccessToken(customUser);
         String refreshToken = jwtUtil.generateRefreshToken(customUser);
 
-        redisService.saveRefreshToken(user.getEmail(), refreshToken);
+        refreshTokenService.saveRefreshToken(user.getEmail(), refreshToken);
 
         Cookie cookie = new Cookie("refreshToken", refreshToken);
         cookie.setHttpOnly(true);
@@ -82,7 +82,7 @@ public class AuthServiceImpl implements AuthService {
         String accessToken = accessTokenHeader.replace("Bearer ", "");
         String email = jwtUtil.extractEmail(accessToken);
 
-        redisService.deleteRefreshToken(email);
+        refreshTokenService.deleteRefreshToken(email);
 
         LogoutResponseDto dto = new LogoutResponseDto(email);
 

@@ -1,5 +1,8 @@
-package com.archiservice.common.config;
+package com.archiservice.chatbot.websocket;
 
+import com.archiservice.chatbot.domain.AuthInfo;
+import com.archiservice.common.jwt.JwtUtil;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.server.ServerHttpRequest;
@@ -18,25 +21,62 @@ import java.security.Principal;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+@RequiredArgsConstructor
 @Configuration
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     private static final int HEARTBEAT_INTERVAL_MILLIS = (int) TimeUnit.SECONDS.toMillis(10);
-    private static final int MESSAGE_SIZE_LIMIT_BYTES = (int) DataSize.ofKilobytes(64).toBytes();       // 최대 64KB
-    private static final int SEND_TIME_LIMIT_MILLIS = (int) TimeUnit.SECONDS.toMillis(20);      // 메시지 전송 최대 20초
-    private static final int SEND_BUFFER_SIZE_LIMIT_BYTES = (int) DataSize.ofKilobytes(512).toBytes();  // 버퍼 최대 512KB
+    private static final int MESSAGE_SIZE_LIMIT_BYTES = (int) DataSize.ofKilobytes(64).toBytes();
+    private static final int SEND_TIME_LIMIT_MILLIS = (int) TimeUnit.SECONDS.toMillis(20);
+    private static final int SEND_BUFFER_SIZE_LIMIT_BYTES = (int) DataSize.ofKilobytes(512).toBytes();
+
+    private final JwtUtil jwtTokenProvider;
 
     @Bean
     public DefaultHandshakeHandler handshakeHandler() {
         return new DefaultHandshakeHandler() {
             @Override
             protected Principal determineUser(ServerHttpRequest request,
-                                              WebSocketHandler wsHandler,
-                                              Map<String, Object> attributes) {
-                return () -> "1"; // 임시 userId
+                WebSocketHandler wsHandler,
+                Map<String, Object> attributes) {
+                String token = extractTokenFromRequest(request);
+                if (token != null && jwtTokenProvider.validateToken(token)) {
+
+                    // TODO: 토큰에서 userId, tagCode, ageCode 파싱(ex : String userId = jwtTokenProvider.getUserId(token))
+                    Long userId = 1L;
+                    int tagCode = 42;
+                    int ageCode = 3;
+
+                    return AuthInfo.of(userId, tagCode, ageCode);
+                }
+                return null;
             }
         };
+    }
+
+    private String extractTokenFromRequest(ServerHttpRequest request) {
+        String authHeader = request.getHeaders().getFirst("Authorization");
+        if(authHeader != null && authHeader.startsWith("Bearer ")) {
+            return authHeader.substring(7);
+        }
+
+        String query = request.getURI().getQuery();
+        if(query!=null){
+            return parseTokenFromQuery(query);
+        }
+        
+        return null;
+    }
+
+    private String parseTokenFromQuery(String query) {
+        String[] params = query.split("&");
+        for (String param : params) {
+            if (param.startsWith("token=")) {
+                return param.substring(6);
+            }
+        }
+        return null;
     }
 
     @Override
@@ -62,8 +102,6 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                 .setSendTimeLimit(SEND_TIME_LIMIT_MILLIS)
                 .setSendBufferSizeLimit(SEND_BUFFER_SIZE_LIMIT_BYTES);
     }
-
-    // TODO : 인증 시스템 구현 후 연결 필요
 
     private TaskScheduler heartbeatScheduler() {
         ThreadPoolTaskScheduler scheduler = new ThreadPoolTaskScheduler();
