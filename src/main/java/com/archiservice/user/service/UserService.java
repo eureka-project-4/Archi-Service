@@ -9,7 +9,7 @@ import com.archiservice.user.dto.response.TendencyResponseDto;
 import java.util.List;
 
 public interface UserService {
-    ApiResponse<ProfileResponseDto> getUserProfile(CustomUser user);
-    ApiResponse updatePassword(PasswordUpdateRequestDto request, CustomUser user);
-    ApiResponse<List<TendencyResponseDto>> getUserTendency(CustomUser user);
+    ProfileResponseDto getUserProfile(CustomUser user);
+    void updatePassword(PasswordUpdateRequestDto request, CustomUser user);
+    List<TendencyResponseDto> getUserTendency(CustomUser user);
 }

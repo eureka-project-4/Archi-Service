@@ -1,6 +1,11 @@
 package com.archiservice.user.dto.request;
 
-// 바로 이어서 작업할 부분
-// 테스트 완료 후 정리
+import lombok.Builder;
+import lombok.Getter;
+
+@Getter
+@Builder
 public class ReservationRequestDto {
+    private long bundleId;
+    private long price;
 }

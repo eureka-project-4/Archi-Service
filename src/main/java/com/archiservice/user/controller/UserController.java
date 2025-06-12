@@ -31,66 +31,74 @@ public class UserController {
 
     @GetMapping("/profile")
     public ResponseEntity<ApiResponse<ProfileResponseDto>> getUserProfile(@AuthenticationPrincipal CustomUser user) {
-        return ResponseEntity.ok(userService.getUserProfile(user));
+        return ResponseEntity.ok(ApiResponse.success(userService.getUserProfile(user)));
     }
 
     @PutMapping("/password")
     public ResponseEntity<ApiResponse> updatePassword(@Valid @RequestBody PasswordUpdateRequestDto request, @AuthenticationPrincipal CustomUser user) {
-        return ResponseEntity.ok(userService.updatePassword(request,user));
+        userService.updatePassword(request,user);
+        return ResponseEntity.ok(ApiResponse.success("비밀번호 변경 성공"));
     }
 
     @GetMapping("/tendency")
     public ResponseEntity<ApiResponse<List<TendencyResponseDto>>> getUserTendency(@AuthenticationPrincipal CustomUser user) {
-        return ResponseEntity.ok(userService.getUserTendency(user));
+        return ResponseEntity.ok(ApiResponse.success(userService.getUserTendency(user)));
     }
 
     @GetMapping("/current/plans")
     public ResponseEntity<ApiResponse<PlanDetailResponseDto>> getCurrentPlan(@AuthenticationPrincipal CustomUser user) {
-        return ResponseEntity.ok(contractService.getPlan(CURRENT, user));
+        return ResponseEntity.ok(ApiResponse.success(contractService.getPlan(CURRENT, user)));
     }
 
     @GetMapping("/current/vass")
     public ResponseEntity<ApiResponse<VasDetailResponseDto>> getCurrentService(@AuthenticationPrincipal CustomUser user) {
-        return ResponseEntity.ok(contractService.getVas(CURRENT, user));
+        return ResponseEntity.ok(ApiResponse.success(contractService.getVas(CURRENT, user)));
     }
 
     @GetMapping("/current/coupons")
     public ResponseEntity<ApiResponse<CouponDetailResponseDto>> getCurrentCoupon(@AuthenticationPrincipal CustomUser user) {
-        return ResponseEntity.ok(contractService.getCoupon(CURRENT, user));
+        return ResponseEntity.ok(ApiResponse.success(contractService.getCoupon(CURRENT, user)));
     }
 
     @GetMapping("/current")
     public ResponseEntity<ApiResponse<List<ContractDetailResponseDto>>> getCurrentContract(@AuthenticationPrincipal CustomUser user) {
-        return ResponseEntity.ok(contractService.getContract(CURRENT, user));
+        return ResponseEntity.ok(ApiResponse.success(contractService.getContract(CURRENT, user)));
     }
 
     @GetMapping("/next/plans")
     public ResponseEntity<ApiResponse<PlanDetailResponseDto>> getNextPlan(@AuthenticationPrincipal CustomUser user) {
-        return ResponseEntity.ok(contractService.getPlan(NEXT, user));
+        return ResponseEntity.ok(ApiResponse.success(contractService.getPlan(NEXT, user)));
     }
 
     @GetMapping("/next/vass")
     public ResponseEntity<ApiResponse<VasDetailResponseDto>> getNextService(@AuthenticationPrincipal CustomUser user) {
-        return ResponseEntity.ok(contractService.getVas(NEXT, user));
+        return ResponseEntity.ok(ApiResponse.success(contractService.getVas(NEXT, user)));
     }
 
     @GetMapping("/next/coupons")
     public ResponseEntity<ApiResponse<CouponDetailResponseDto>> getNextCoupon(@AuthenticationPrincipal CustomUser user) {
-        return ResponseEntity.ok(contractService.getCoupon(NEXT, user));
+        return ResponseEntity.ok(ApiResponse.success(contractService.getCoupon(NEXT, user)));
     }
 
     @GetMapping("/next")
     public ResponseEntity<ApiResponse<List<ContractDetailResponseDto>>> getNextContract(@AuthenticationPrincipal CustomUser user) {
-        return ResponseEntity.ok(contractService.getContract(NEXT, user));
+        return ResponseEntity.ok(ApiResponse.success(contractService.getContract(NEXT, user)));
     }
 
-    @PutMapping("/next")
-    public ResponseEntity<ApiResponse> cancelNextReservation(@AuthenticationPrincipal CustomUser user) {
-        return ResponseEntity.ok(contractService.cancelNextReservation(user));
+    @PutMapping("/next/cancel")
+    public ResponseEntity<ApiResponse<Void>> cancelNextContract(@AuthenticationPrincipal CustomUser user) {
+        contractService.cancelNextContract(user);
+        return ResponseEntity.ok(ApiResponse.success("예약 취소 성공",null));
+    }
+
+    @PutMapping("/next/update")
+    public ResponseEntity<ApiResponse<Void>> updateNextContract(@Valid @RequestBody ReservationRequestDto requestDto, @AuthenticationPrincipal CustomUser user) {
+        contractService.updateNextContract(requestDto, user);
+        return ResponseEntity.ok(ApiResponse.success("예약 갱신 성공", null));
     }
 
     @GetMapping("/history")
     public ResponseEntity<ApiResponse<List<ContractDetailResponseDto>>> getHistoryContract(@AuthenticationPrincipal CustomUser user) {
-        return ResponseEntity.ok(contractService.getContract(HISTORY, user));
+        return ResponseEntity.ok(ApiResponse.success(contractService.getContract(HISTORY, user)));
     }
 }
