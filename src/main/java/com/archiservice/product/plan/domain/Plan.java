@@ -2,14 +2,14 @@ package com.archiservice.product.plan.domain;
 
 import com.archiservice.common.TimeStamp;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "plans")
+@Builder
+@AllArgsConstructor
 public class Plan extends TimeStamp {
 
     @Id
