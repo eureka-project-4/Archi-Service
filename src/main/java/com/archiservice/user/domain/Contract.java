@@ -2,6 +2,7 @@ package com.archiservice.user.domain;
 
 import com.archiservice.product.bundle.domain.ProductBundle;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -34,5 +35,20 @@ public class Contract {
         this.paymentMethod = contract.paymentMethod;
         this.price = contract.price;
         this.productBundle = contract.productBundle;
+    }
+
+    @Builder
+    public Contract (ProductBundle productBundle, User user, String paymentMethod, Long price, LocalDateTime startDate, LocalDateTime endDate) {
+        this.productBundle = productBundle;
+        this.user = user;
+        this.paymentMethod = paymentMethod;
+        this.price = price;
+        this.startDate = startDate;
+        this.endDate = endDate;
+    }
+
+    public void updateNextContract(ProductBundle bundle, Long price){
+        this.productBundle = bundle;
+        this.price = price;
     }
 }

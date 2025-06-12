@@ -9,6 +9,7 @@ import com.archiservice.user.dto.request.PasswordUpdateRequestDto;
 import com.archiservice.user.dto.request.ReservationRequestDto;
 import com.archiservice.user.dto.response.ContractDetailResponseDto;
 import com.archiservice.user.dto.response.ProfileResponseDto;
+import com.archiservice.user.dto.response.ReservationResponseDto;
 import com.archiservice.user.dto.response.TendencyResponseDto;
 import com.archiservice.user.service.ContractService;
 import com.archiservice.user.service.UserService;
@@ -61,7 +62,7 @@ public class UserController {
 
     @GetMapping("/current")
     public ResponseEntity<ApiResponse<List<ContractDetailResponseDto>>> getCurrentContract(@AuthenticationPrincipal CustomUser user) {
-        return ResponseEntity.ok(contractService.getContract(CURRENT, user));
+        return ResponseEntity.ok(ApiResponse.success(contractService.getContract(CURRENT, user)));
     }
 
     @GetMapping("/next/plans")
@@ -81,16 +82,21 @@ public class UserController {
 
     @GetMapping("/next")
     public ResponseEntity<ApiResponse<List<ContractDetailResponseDto>>> getNextContract(@AuthenticationPrincipal CustomUser user) {
-        return ResponseEntity.ok(contractService.getContract(NEXT, user));
+        return ResponseEntity.ok(ApiResponse.success(contractService.getContract(NEXT, user)));
     }
 
     @PutMapping("/next/cancel")
-    public ResponseEntity<ApiResponse> cancelNextReservation(@AuthenticationPrincipal CustomUser user) {
-        return ResponseEntity.ok(contractService.cancelNextReservation(user));
+    public ResponseEntity<ApiResponse<ReservationResponseDto>> cancelNextContract(@AuthenticationPrincipal CustomUser user) {
+        return ResponseEntity.ok(ApiResponse.success(contractService.cancelNextContract(user)));
+    }
+
+    @PutMapping("/next/update")
+    public ResponseEntity<ApiResponse<ReservationResponseDto>> updateNextContract(@Valid @RequestBody ReservationRequestDto requestDto, @AuthenticationPrincipal CustomUser user) {
+        return ResponseEntity.ok(ApiResponse.success(contractService.updateNextContract(requestDto, user)));
     }
 
     @GetMapping("/history")
     public ResponseEntity<ApiResponse<List<ContractDetailResponseDto>>> getHistoryContract(@AuthenticationPrincipal CustomUser user) {
-        return ResponseEntity.ok(contractService.getContract(HISTORY, user));
+        return ResponseEntity.ok(ApiResponse.success(contractService.getContract(HISTORY, user)));
     }
 }
