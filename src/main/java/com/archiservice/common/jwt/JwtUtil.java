@@ -76,6 +76,7 @@ public class JwtUtil {
 
     public String generateAccessToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
+       
 
         return createToken(claims, userDetails.getUsername(), accessTokenExpiration);
     }
@@ -113,5 +114,9 @@ public class JwtUtil {
             log.error("Token validation failed: {}", e.getMessage());
             return false;
         }
+    }
+    
+    public String generateCustomToken(Map<String, Object> claims, String subject) {
+    	return createToken(claims, subject, accessTokenExpiration);
     }
 }
