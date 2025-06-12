@@ -13,14 +13,14 @@ import com.archiservice.product.plan.repository.PlanRepository;
 import com.archiservice.product.vas.domain.Vas;
 import com.archiservice.product.vas.dto.response.VasDetailResponseDto;
 import com.archiservice.product.vas.repository.VasRepository;
-import com.archiservice.recommend.dto.response.RecommendCouponResponseDto;
-import com.archiservice.recommend.dto.response.RecommendPlanResponseDto;
-import com.archiservice.recommend.dto.response.RecommendResponseDto;
-import com.archiservice.recommend.dto.response.RecommendVasResponseDto;
+import com.archiservice.recommend.dto.response.*;
 import com.archiservice.recommend.service.RecommendService;
 import com.archiservice.review.coupon.repository.CouponReviewRepository;
+import com.archiservice.review.coupon.service.CouponReviewService;
 import com.archiservice.review.plan.repository.PlanReviewRepository;
+import com.archiservice.review.plan.service.PlanReviewService;
 import com.archiservice.review.vas.repository.VasReviewRepository;
+import com.archiservice.review.vas.service.VasReviewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,6 +46,10 @@ public class RecommendServiceImpl implements RecommendService {
     private final CouponRepository couponRepository;
     private final CommonCodeService commonCodeService;
 
+    private final PlanReviewService planReviewService;
+    private final VasReviewService vasReviewService;
+    private final CouponReviewService couponReviewService;
+
     @Override
     public RecommendResponseDto recommend(CustomUser user) {
 
@@ -67,9 +71,10 @@ public class RecommendServiceImpl implements RecommendService {
         long userTagCode = user.getUser().getTagCode();
         double globalPlanAvg = getGlobalAvg("plan");
 
+        Map<Long, ScoreResponseDto> scoreMap = planReviewService.getPlanScoreStatistics();
         List<Map.Entry<Plan, Integer>> bitCountSorted = planRepository.findAll().stream()
                 .map(plan -> Map.entry(plan, Long.bitCount(userTagCode & plan.getTagCode())))
-                .filter(entry -> entry.getValue() >= 0)
+                .filter(entry -> entry.getValue() > 0)
                 .sorted((e1, e2) -> Integer.compare(e2.getValue(), e1.getValue()))
                 .limit(10)
                 .toList();
@@ -78,11 +83,12 @@ public class RecommendServiceImpl implements RecommendService {
                 .map(entry -> {
                     Plan plan = entry.getKey();
                     int bitCount = entry.getValue();
-                    int reviewCount = planReviewRepository.countPlanReviewByPlan(plan);
-                    double avgRating = Optional.ofNullable(
-                            planReviewRepository.getAverageRatingByPlan(plan)
-                    ).orElse(0.0);
+
+                    ScoreResponseDto score = scoreMap.get(plan.getPlanId());
+                    int reviewCount = score != null ? score.getReviewCount() : 0;
+                    double avgRating = score != null ? score.getAverageScore() : 0.0;
                     double bayesScore = computeBayesianAverage(avgRating, reviewCount, globalPlanAvg, MIN_REVIEWS);
+
                     return new ProductWithScore<>(plan, bitCount, bayesScore);
                 })
                 .sorted(Comparator
@@ -91,6 +97,7 @@ public class RecommendServiceImpl implements RecommendService {
                 .limit(5)
                 .toList();
 
+        // TODO : TagCode , CommonCode 쿼리 최적화 필요
         List<PlanDetailResponseDto> recommendedPlans = topPlans.stream()
                 .map(p -> {
                     List<String> tags = tagMetaService.extractTagsFromCode(p.product.getTagCode());
@@ -109,9 +116,11 @@ public class RecommendServiceImpl implements RecommendService {
         long userTagCode = user.getUser().getTagCode();
         double globalVasAvg = getGlobalAvg("vas");
 
+        Map<Long, ScoreResponseDto> scoreMap = vasReviewService.getVasScoreStatistics();
+
         List<Map.Entry<Vas, Integer>> bitCountSorted = vasRepository.findAll().stream()
                 .map(vas -> Map.entry(vas, Long.bitCount(userTagCode & vas.getTagCode())))
-                .filter(entry -> entry.getValue() >= 0)
+                .filter(entry -> entry.getValue() > 0)
                 .sorted((e1, e2) -> Integer.compare(e2.getValue(), e1.getValue()))
                 .limit(10)
                 .toList();
@@ -120,10 +129,12 @@ public class RecommendServiceImpl implements RecommendService {
                 .map(entry -> {
                     Vas vas = entry.getKey();
                     int bitCount = entry.getValue();
-                    int reviewCount = vasReviewRepository.countVasReviewByVas(vas);
-                    double avgRating = Optional.ofNullable(
-                            vasReviewRepository.getAverageRatingByVas(vas)).orElse(0.0);
+
+                    ScoreResponseDto score = scoreMap.get(vas.getVasId());
+                    int reviewCount = score != null ? score.getReviewCount() : 0;
+                    double avgRating = score != null ? score.getAverageScore() : 0.0;
                     double bayesScore = computeBayesianAverage(avgRating, reviewCount, globalVasAvg, MIN_REVIEWS);
+
                     return new ProductWithScore<>(vas, bitCount, bayesScore);
                 })
                 .sorted(Comparator
@@ -149,9 +160,11 @@ public class RecommendServiceImpl implements RecommendService {
         long userTagCode = user.getUser().getTagCode();
         double globalCouponAvg = getGlobalAvg("coupon");
 
+        Map<Long, ScoreResponseDto> scoreMap = couponReviewService.getCouponScoreStatistics();
+
         List<Map.Entry<Coupon, Integer>> bitCountSorted = couponRepository.findAll().stream()
                 .map(coupon -> Map.entry(coupon, Long.bitCount(userTagCode & coupon.getTagCode())))
-                .filter(entry -> entry.getValue() >= 0)
+                .filter(entry -> entry.getValue() > 0)
                 .sorted((e1, e2) -> Integer.compare(e2.getValue(), e1.getValue()))
                 .limit(10)
                 .toList();
@@ -160,10 +173,12 @@ public class RecommendServiceImpl implements RecommendService {
                 .map(entry -> {
                     Coupon coupon = entry.getKey();
                     int bitCount = entry.getValue();
-                    int reviewCount = couponReviewRepository.countCouponReviewByCoupon(coupon);
-                    double avgRating = Optional.ofNullable(
-                            couponReviewRepository.getAverageRatingByCoupon(coupon)).orElse(0.0);
+
+                    ScoreResponseDto score = scoreMap.get(coupon.getCouponId());
+                    int reviewCount = score != null ? score.getReviewCount() : 0;
+                    double avgRating = score != null ? score.getAverageScore() : 0.0;
                     double bayesScore = computeBayesianAverage(avgRating, reviewCount, globalCouponAvg, MIN_REVIEWS);
+
                     return new ProductWithScore<>(coupon, bitCount, bayesScore);
                 })
                 .sorted(Comparator
@@ -182,6 +197,7 @@ public class RecommendServiceImpl implements RecommendService {
 
         return new RecommendCouponResponseDto(recommendedCoupons);
     }
+
 
     public double getGlobalAvg(String type) {
         return switch (type.toLowerCase()) {
