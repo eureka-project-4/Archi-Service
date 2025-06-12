@@ -29,7 +29,7 @@ public class ProductBundle {
     private Plan plan;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "vas_id")
+    @JoinColumn(name = "service_id")
     private Vas vas;
 
     @ManyToOne(fetch = FetchType.LAZY)
