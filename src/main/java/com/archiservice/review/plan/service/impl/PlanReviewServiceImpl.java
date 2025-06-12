@@ -100,4 +100,10 @@ public class PlanReviewServiceImpl implements PlanReviewService {
                         )
                 ));
     }
+
+    @Override
+    public Integer getAverageReviewCountPerPlanAsInteger() {
+        Double avgReviewCount = planReviewRepository.findAverageReviewCountPerPlanNative();
+        return avgReviewCount != null ? (int) Math.round(avgReviewCount) : 0;
+    }
 }

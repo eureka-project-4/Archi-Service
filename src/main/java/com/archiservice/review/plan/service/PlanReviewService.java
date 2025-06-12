@@ -15,4 +15,5 @@ public interface PlanReviewService {
     Page<PlanReviewResponseDto> getReviewsByPlanId(Long planId, Pageable pageable);
 
     Map<Long, ScoreResponseDto> getPlanScoreStatistics();
+    Integer getAverageReviewCountPerPlanAsInteger();
 }

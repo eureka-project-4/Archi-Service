@@ -15,4 +15,6 @@ public interface VasReviewService {
     Page<VasReviewResponseDto> getReviewsByVasId(Long vasId, Pageable pageable);
 
     Map<Long, ScoreResponseDto> getVasScoreStatistics();
+
+    Integer getAverageReviewCountPerVasAsInteger();
 }

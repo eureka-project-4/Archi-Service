@@ -95,4 +95,11 @@ public class VasReviewServiceImpl implements VasReviewService {
                         )
                 ));
     }
+
+    @Override
+    public Integer getAverageReviewCountPerVasAsInteger() {
+        Double avgReviewCount = vasReviewRepository.findAverageReviewCountPerVasNative();
+        return avgReviewCount != null ? (int) Math.round(avgReviewCount) : 0;
+    }
+
 }

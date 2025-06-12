@@ -16,5 +16,6 @@ public interface CouponReviewService {
     Page<CouponReviewResponseDto> getReviewsByCouponId(Long couponId, Pageable pageable);
 
     Map<Long, ScoreResponseDto> getCouponScoreStatistics();
+    Integer getAverageReviewCountPerCouponAsInteger();
 }
 

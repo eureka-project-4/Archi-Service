@@ -32,9 +32,6 @@ import java.util.*;
 @Transactional(readOnly = true)
 public class RecommendServiceImpl implements RecommendService {
 
-    // TODO : 각 상품의 전체 평균 리뷰 수 구하고, 해당값 베이지안 계산시 사용
-    final int MIN_REVIEWS = 30;
-
     private final TagMetaService tagMetaService;
     private final PlanRepository planRepository;
     private final VasRepository vasRepository;
@@ -70,6 +67,7 @@ public class RecommendServiceImpl implements RecommendService {
     public RecommendPlanResponseDto recommendPlan(CustomUser user) {
         long userTagCode = user.getUser().getTagCode();
         double globalPlanAvg = getGlobalAvg("plan");
+        Integer planMinReviews = planReviewService.getAverageReviewCountPerPlanAsInteger();
 
         Map<Long, ScoreResponseDto> scoreMap = planReviewService.getPlanScoreStatistics();
         List<Map.Entry<Plan, Integer>> bitCountSorted = planRepository.findAll().stream()
@@ -87,7 +85,7 @@ public class RecommendServiceImpl implements RecommendService {
                     ScoreResponseDto score = scoreMap.get(plan.getPlanId());
                     int reviewCount = score != null ? score.getReviewCount() : 0;
                     double avgRating = score != null ? score.getAverageScore() : 0.0;
-                    double bayesScore = computeBayesianAverage(avgRating, reviewCount, globalPlanAvg, MIN_REVIEWS);
+                    double bayesScore = computeBayesianAverage(avgRating, reviewCount, globalPlanAvg, planMinReviews);
 
                     return new ProductWithScore<>(plan, bitCount, bayesScore);
                 })
@@ -117,6 +115,7 @@ public class RecommendServiceImpl implements RecommendService {
         double globalVasAvg = getGlobalAvg("vas");
 
         Map<Long, ScoreResponseDto> scoreMap = vasReviewService.getVasScoreStatistics();
+        Integer vasMinReviews = vasReviewService.getAverageReviewCountPerVasAsInteger();
 
         List<Map.Entry<Vas, Integer>> bitCountSorted = vasRepository.findAll().stream()
                 .map(vas -> Map.entry(vas, Long.bitCount(userTagCode & vas.getTagCode())))
@@ -133,7 +132,7 @@ public class RecommendServiceImpl implements RecommendService {
                     ScoreResponseDto score = scoreMap.get(vas.getVasId());
                     int reviewCount = score != null ? score.getReviewCount() : 0;
                     double avgRating = score != null ? score.getAverageScore() : 0.0;
-                    double bayesScore = computeBayesianAverage(avgRating, reviewCount, globalVasAvg, MIN_REVIEWS);
+                    double bayesScore = computeBayesianAverage(avgRating, reviewCount, globalVasAvg, vasMinReviews);
 
                     return new ProductWithScore<>(vas, bitCount, bayesScore);
                 })
@@ -161,6 +160,7 @@ public class RecommendServiceImpl implements RecommendService {
         double globalCouponAvg = getGlobalAvg("coupon");
 
         Map<Long, ScoreResponseDto> scoreMap = couponReviewService.getCouponScoreStatistics();
+        Integer couponMinReviews = couponReviewService.getAverageReviewCountPerCouponAsInteger();
 
         List<Map.Entry<Coupon, Integer>> bitCountSorted = couponRepository.findAll().stream()
                 .map(coupon -> Map.entry(coupon, Long.bitCount(userTagCode & coupon.getTagCode())))
@@ -177,7 +177,7 @@ public class RecommendServiceImpl implements RecommendService {
                     ScoreResponseDto score = scoreMap.get(coupon.getCouponId());
                     int reviewCount = score != null ? score.getReviewCount() : 0;
                     double avgRating = score != null ? score.getAverageScore() : 0.0;
-                    double bayesScore = computeBayesianAverage(avgRating, reviewCount, globalCouponAvg, MIN_REVIEWS);
+                    double bayesScore = computeBayesianAverage(avgRating, reviewCount, globalCouponAvg, couponMinReviews);
 
                     return new ProductWithScore<>(coupon, bitCount, bayesScore);
                 })

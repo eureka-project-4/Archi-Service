@@ -29,4 +29,11 @@ public interface CouponReviewRepository extends JpaRepository<CouponReview, Long
 
     @Query("SELECT cr.coupon.couponId, AVG(cr.score), COUNT(cr.score) FROM CouponReview cr WHERE cr.score IS NOT NULL GROUP BY cr.coupon.couponId")
     List<Object[]> findAverageScoreAndCountByCoupon();
+
+    @Query(value = "SELECT AVG(review_count) FROM (" +
+            "SELECT COUNT(*) as review_count FROM coupon_reviews GROUP BY coupon_id" +
+            ") as coupon_review_counts",
+            nativeQuery = true)
+    Double findAverageReviewCountPerCouponNative();
+
 }

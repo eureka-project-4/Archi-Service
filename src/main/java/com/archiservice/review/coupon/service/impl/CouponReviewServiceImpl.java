@@ -95,4 +95,11 @@ public class CouponReviewServiceImpl implements CouponReviewService {
                         )
                 ));
     }
+
+    @Override
+    public Integer getAverageReviewCountPerCouponAsInteger() {
+        Double avgReviewCount = couponReviewRepository.findAverageReviewCountPerCouponNative();
+        return avgReviewCount != null ? (int) Math.round(avgReviewCount) : 0;
+    }
+
 }
