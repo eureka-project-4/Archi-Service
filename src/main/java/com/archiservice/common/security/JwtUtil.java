@@ -76,7 +76,6 @@ public class JwtUtil {
 
     public String generateAccessToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
-       
 
         return createToken(claims, userDetails.getUsername(), accessTokenExpiration);
     }
