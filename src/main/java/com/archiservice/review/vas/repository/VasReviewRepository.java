@@ -10,6 +10,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
+
 public interface VasReviewRepository extends JpaRepository<VasReview, Long> {
 
     @Query("SELECT vr FROM VasReview vr JOIN FETCH vr.user WHERE vr.vas.vasId = :vasId ORDER BY vr.createdAt DESC")
@@ -25,5 +27,7 @@ public interface VasReviewRepository extends JpaRepository<VasReview, Long> {
     @Query("SELECT AVG(r.score) FROM VasReview r WHERE r.vas IS NOT NULL")
     Double findAverageRatingByVasIsNotNull();
 
+    @Query("SELECT vr.vas.vasId, AVG(vr.score), COUNT(vr.score) FROM VasReview vr WHERE vr.score IS NOT NULL GROUP BY vr.vas.vasId")
+    List<Object[]> findAverageScoreAndCountByVas();
 }
 

@@ -10,8 +10,10 @@ import com.archiservice.product.coupon.repository.CouponRepository;
 import com.archiservice.review.coupon.domain.CouponReview;
 import com.archiservice.review.coupon.dto.request.CouponReviewRequestDto;
 import com.archiservice.review.coupon.dto.response.CouponReviewResponseDto;
+import com.archiservice.review.coupon.dto.response.CouponScoreResponseDto;
 import com.archiservice.review.coupon.repository.CouponReviewRepository;
 import com.archiservice.review.coupon.service.CouponReviewService;
+import com.archiservice.review.plan.dto.response.PlanScoreResponseDto;
 import com.archiservice.user.domain.User;
 import com.archiservice.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +21,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -76,5 +81,17 @@ public class CouponReviewServiceImpl implements CouponReviewService {
     public Page<CouponReviewResponseDto> getReviewsByCouponId(Long couponId, Pageable pageable) {
         Page<CouponReview> reviews = couponReviewRepository.findByCouponIdWithUser(couponId, pageable);
         return reviews.map(CouponReviewResponseDto::from);
+    }
+
+    @Override
+    public List<CouponScoreResponseDto> getCouponScoreStatistics() {
+        List<Object[]> results = couponReviewRepository.findAverageScoreAndCountByCoupon();
+        return results.stream()
+                .map(result -> new CouponScoreResponseDto(
+                        (Long) result[0],           // couponId
+                        (Double) result[1],         // avgScore
+                        ((Long) result[2]).intValue() // reviewCount
+                ))
+                .collect(Collectors.toList());
     }
 }

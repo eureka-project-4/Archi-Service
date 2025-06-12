@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface PlanReviewRepository extends JpaRepository<PlanReview, Long> {
@@ -24,5 +25,8 @@ public interface PlanReviewRepository extends JpaRepository<PlanReview, Long> {
 
     @Query("SELECT AVG(r.score) FROM PlanReview r WHERE r.plan IS NOT NULL")
     Double findAverageRatingByPlanIsNotNull();
+
+    @Query("SELECT pr.plan.planId, AVG(pr.score), COUNT(pr.score) FROM PlanReview pr WHERE pr.score IS NOT NULL GROUP BY pr.plan.planId")
+    List<Object[]> findAverageScoreAndCountByPlan();
 
 }
