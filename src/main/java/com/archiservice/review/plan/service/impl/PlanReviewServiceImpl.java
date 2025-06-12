@@ -82,4 +82,23 @@ public class PlanReviewServiceImpl implements PlanReviewService {
         Page<PlanReview> reviews = planReviewRepository.findByPlanIdWithUser(planId, pageable);
         return reviews.map(PlanReviewResponseDto::from);
     }
+
+    @Override
+    public Map<Long, ScoreResponseDto> getPlanScoreStatistics() {
+        List<Object[]> results = planReviewRepository.findAverageScoreAndCountByPlan();
+        return results.stream()
+                .collect(Collectors.toMap(
+                        result -> (Long) result[0], // planId
+                        result -> new ScoreResponseDto(
+                                (Double) result[1],              // avgScore
+                                ((Long) result[2]).intValue()   // reviewCount
+                        )
+                ));
+    }
+
+    @Override
+    public Integer getAverageReviewCountPerPlanAsInteger() {
+        Double avgReviewCount = planReviewRepository.findAverageReviewCountPerPlanNative();
+        return avgReviewCount != null ? (int) Math.round(avgReviewCount) : 0;
+    }
 }

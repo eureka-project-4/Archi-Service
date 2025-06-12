@@ -78,4 +78,23 @@ public class VasReviewServiceImpl implements VasReviewService {
         return reviews.map(VasReviewResponseDto::from);
     }
 
+    @Override
+    public Map<Long, ScoreResponseDto> getVasScoreStatistics() {
+        List<Object[]> results = vasReviewRepository.findAverageScoreAndCountByVas();
+        return results.stream()
+                .collect(Collectors.toMap(
+                        result -> (Long) result[0], // planId
+                        result -> new ScoreResponseDto(
+                                (Double) result[1],              // avgScore
+                                ((Long) result[2]).intValue()   // reviewCount
+                        )
+                ));
+    }
+
+    @Override
+    public Integer getAverageReviewCountPerVasAsInteger() {
+        Double avgReviewCount = vasReviewRepository.findAverageReviewCountPerVasNative();
+        return avgReviewCount != null ? (int) Math.round(avgReviewCount) : 0;
+    }
+
 }

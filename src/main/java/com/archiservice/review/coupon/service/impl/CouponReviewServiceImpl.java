@@ -77,4 +77,24 @@ public class CouponReviewServiceImpl implements CouponReviewService {
         Page<CouponReview> reviews = couponReviewRepository.findByCouponIdWithUser(couponId, pageable);
         return reviews.map(CouponReviewResponseDto::from);
     }
+
+    @Override
+    public Map<Long, ScoreResponseDto> getCouponScoreStatistics() {
+        List<Object[]> results = couponReviewRepository.findAverageScoreAndCountByCoupon();
+        return results.stream()
+                .collect(Collectors.toMap(
+                        result -> (Long) result[0], // planId
+                        result -> new ScoreResponseDto(
+                                (Double) result[1],              // avgScore
+                                ((Long) result[2]).intValue()   // reviewCount
+                        )
+                ));
+    }
+
+    @Override
+    public Integer getAverageReviewCountPerCouponAsInteger() {
+        Double avgReviewCount = couponReviewRepository.findAverageReviewCountPerCouponNative();
+        return avgReviewCount != null ? (int) Math.round(avgReviewCount) : 0;
+    }
+
 }

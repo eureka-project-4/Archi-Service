@@ -10,4 +10,8 @@ public interface VasReviewService {
     VasReviewResponseDto updateReview(Long userId, Long reviewId, VasReviewRequestDto requestDto);
     void deleteReview(Long userId, Long reviewId);
     Page<VasReviewResponseDto> getReviewsByVasId(Long vasId, Pageable pageable);
+
+    Map<Long, ScoreResponseDto> getVasScoreStatistics();
+
+    Integer getAverageReviewCountPerVasAsInteger();
 }

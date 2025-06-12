@@ -10,5 +10,8 @@ public interface CouponReviewService {
     CouponReviewResponseDto updateReview(Long userId, Long reviewId, CouponReviewRequestDto requestDto);
     void deleteReview(Long userId, Long reviewId);
     Page<CouponReviewResponseDto> getReviewsByCouponId(Long couponId, Pageable pageable);
+
+    Map<Long, ScoreResponseDto> getCouponScoreStatistics();
+    Integer getAverageReviewCountPerCouponAsInteger();
 }
 

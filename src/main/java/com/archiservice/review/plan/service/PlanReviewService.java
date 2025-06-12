@@ -10,4 +10,7 @@ public interface PlanReviewService {
     PlanReviewResponseDto updateReview(Long userId, Long reviewId, PlanReviewRequestDto requestDto);
     void deleteReview(Long userId, Long reviewId);
     Page<PlanReviewResponseDto> getReviewsByPlanId(Long planId, Pageable pageable);
+
+    Map<Long, ScoreResponseDto> getPlanScoreStatistics();
+    Integer getAverageReviewCountPerPlanAsInteger();
 }

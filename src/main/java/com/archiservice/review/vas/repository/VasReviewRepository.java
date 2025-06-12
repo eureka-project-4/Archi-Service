@@ -16,5 +16,21 @@ public interface VasReviewRepository extends JpaRepository<VasReview, Long> {
 
     boolean existsByUserAndVas(User user, Vas vas);
 
+    int countVasReviewByVas(Vas vas);
+
+    @Query("SELECT AVG(r.score) FROM VasReview r WHERE r.vas = :vas")
+    Double getAverageRatingByVas(@Param("vas") Vas vas);
+
+    @Query("SELECT AVG(r.score) FROM VasReview r WHERE r.vas IS NOT NULL")
+    Double findAverageRatingByVasIsNotNull();
+
+    @Query("SELECT vr.vas.vasId, AVG(vr.score), COUNT(vr.score) FROM VasReview vr WHERE vr.score IS NOT NULL GROUP BY vr.vas.vasId")
+    List<Object[]> findAverageScoreAndCountByVas();
+
+    @Query(value = "SELECT AVG(review_count) FROM (" +
+            "SELECT COUNT(*) as review_count FROM vas_reviews GROUP BY vas_id" +
+            ") as vas_review_counts",
+            nativeQuery = true)
+    Double findAverageReviewCountPerVasNative();
 }
 
