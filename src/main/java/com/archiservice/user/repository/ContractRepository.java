@@ -38,4 +38,5 @@ public interface ContractRepository extends JpaRepository<Contract, Long> {
     Optional<Long> findCouponIdByOffset(@Param("userId") Long userId, @Param("offset") int offset);
 
     List<Contract> findTop2ByUserOrderByIdDesc(User user);
+    Contract findTop1ByUserOrderByIdDesc(User user);
 }

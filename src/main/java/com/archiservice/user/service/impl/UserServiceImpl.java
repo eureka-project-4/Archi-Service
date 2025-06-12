@@ -27,17 +27,17 @@ public class UserServiceImpl implements UserService {
     private final TagMetaService tagMetaService;
 
     @Override
-    public ApiResponse<ProfileResponseDto> getUserProfile(CustomUser customUser) {
+    public ProfileResponseDto getUserProfile(CustomUser customUser) {
         User user = userRepository.findById(customUser.getId())
                 .orElseThrow(() -> new UserNotFoundException("올바른 사용자 정보를 가져오지 못했습니다."));
 
         ProfileResponseDto profileResponseDto = ProfileResponseDto.from(user);
 
-        return ApiResponse.success(profileResponseDto);
+        return profileResponseDto;
     }
 
     @Override
-    public ApiResponse updatePassword(PasswordUpdateRequestDto request, CustomUser customUser) {
+    public void updatePassword(PasswordUpdateRequestDto request, CustomUser customUser) {
         User user = userRepository.findById(customUser.getId())
                 .orElseThrow(() -> new UserNotFoundException("올바른 사용자 정보를 가져오지 못했습니다."));
 
@@ -47,12 +47,10 @@ public class UserServiceImpl implements UserService {
 
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
         userRepository.save(user);
-
-        return ApiResponse.success(null);
     }
 
     @Override
-    public ApiResponse<List<TendencyResponseDto>> getUserTendency(CustomUser customUser) {
+    public List<TendencyResponseDto> getUserTendency(CustomUser customUser) {
         User user = userRepository.findById(customUser.getId())
                 .orElseThrow(() -> new UserNotFoundException("올바른 사용자 정보를 가져오지 못했습니다."));
 
@@ -69,6 +67,6 @@ public class UserServiceImpl implements UserService {
             tendencies.add(tendencyResponseDto);
         }
 
-        return ApiResponse.success(tendencies);
+        return tendencies;
     }
 }
