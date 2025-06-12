@@ -11,6 +11,7 @@ import org.springframework.data.redis.connection.stream.Consumer;
 import org.springframework.data.redis.connection.stream.MapRecord;
 import org.springframework.data.redis.connection.stream.ReadOffset;
 import org.springframework.data.redis.connection.stream.StreamOffset;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StreamOperations;
 import org.springframework.data.redis.stream.StreamMessageListenerContainer;
 import org.springframework.stereotype.Component;
@@ -22,13 +23,13 @@ public class RedisStreamConsumer {
 
   private final AiService aiService;
   private final StreamMessageListenerContainer<String, MapRecord<String, String, String>> streamContainer;
-  private final StreamOperations<String, Object, Object> streamOperations;
+  private final RedisTemplate<String, Object> redisTemplate;
   private final ObjectMapper objectMapper;
 
   @PostConstruct
   public void startListening() {
     streamContainer.receive(
-        Consumer.from("chat-group", "consumer-1"),
+        Consumer.from("response-handler", "consumer-1"),
         StreamOffset.create("ai-response-stream", ReadOffset.lastConsumed()),
         this::handleMessage
     );
@@ -40,7 +41,7 @@ public class RedisStreamConsumer {
       ChatResponseDto response = convertToDto(record.getValue());
       aiService.handleAIResponse(response);
 
-      streamOperations.acknowledge("chat-group", record);
+      redisTemplate.opsForStream().acknowledge("response-handler", record);
     } catch (Exception e) {
       log.error("메시지 처리 실패: {}", e.getMessage());
     }
@@ -55,10 +56,10 @@ public class RedisStreamConsumer {
  * Redis Stream을 소비(consume)하는 역할을 하는 클래스
  * Redis 스트림에 들어오는 데이터를 읽고 처리하며, aiService를 통해 AI 응답 처리를 담당
  *
- * 	•	aiService: 실제로 Redis에서 받은 메시지를 처리하는 서비스
- * 	•	streamContainer: Redis Stream을 수신(listen)하고 처리하는 역할을 하는 객체입니다. Spring Data Redis에서 제공하는 StreamMessageListenerContainer
+ *  •  aiService: 실제로 Redis에서 받은 메시지를 처리하는 서비스
+ *  •  streamContainer: Redis Stream을 수신(listen)하고 처리하는 역할을 하는 객체입니다. Spring Data Redis에서 제공하는 StreamMessageListenerContainer
  *
  *
- * 	받는 것만(consume only)!!!!
- * 	보내는 역할(produce)“는 RedisStreamService.sendToAI()
+ *  받는 것만(consume only)!!!!
+ *  보내는 역할(produce)"는 RedisStreamService.sendToAI()
  */

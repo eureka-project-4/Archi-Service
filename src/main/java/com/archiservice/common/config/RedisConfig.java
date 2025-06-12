@@ -62,15 +62,10 @@ public class RedisConfig {
     }
 
     @Bean
-    public StreamOperations<String, String, String> streamStringOperations() {
-        RedisTemplate<String, String> stringRedisTemplate = new RedisTemplate<>();
-        stringRedisTemplate.setConnectionFactory(redisConnectionFactory());
-        stringRedisTemplate.setKeySerializer(new StringRedisSerializer());
-        stringRedisTemplate.setValueSerializer(new StringRedisSerializer());
-        stringRedisTemplate.afterPropertiesSet();
-
-        return stringRedisTemplate.opsForStream();
+    public StreamOperations<String, Object, Object> streamOperations(RedisTemplate<String, Object> redisTemplate) {
+        return redisTemplate.opsForStream();
     }
+
 
     @Bean
     public RedisTemplate<String, ChatMessageDto> chatMessageRedisTemplate(RedisConnectionFactory connectionFactory) {
