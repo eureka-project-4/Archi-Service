@@ -17,7 +17,6 @@ import com.archiservice.user.domain.Contract;
 import com.archiservice.user.domain.User;
 import com.archiservice.user.dto.request.ReservationRequestDto;
 import com.archiservice.user.dto.response.ContractDetailResponseDto;
-import com.archiservice.user.dto.response.ReservationResponseDto;
 import com.archiservice.user.enums.Period;
 import com.archiservice.user.repository.ContractRepository;
 import com.archiservice.user.repository.UserRepository;
@@ -65,7 +64,7 @@ public class ContractServiceImpl implements ContractService {
     }
 
     @Override
-    public ApiResponse<PlanDetailResponseDto> getPlan(Period period, CustomUser customUser) {
+    public PlanDetailResponseDto getPlan(Period period, CustomUser customUser) {
         User user = userRepository.findById(customUser.getId())
                 .orElseThrow(() -> new UserNotFoundException());
 
@@ -74,11 +73,11 @@ public class ContractServiceImpl implements ContractService {
 
         PlanDetailResponseDto planDetailResponseDto = planService.getPlanDetail(planId);
 
-        return ApiResponse.success(planDetailResponseDto);
+        return planDetailResponseDto;
     }
 
     @Override
-    public ApiResponse<VasDetailResponseDto> getVas(Period period, CustomUser customUser) {
+    public VasDetailResponseDto getVas(Period period, CustomUser customUser) {
         User user = userRepository.findById(customUser.getId())
                 .orElseThrow(() -> new UserNotFoundException());
 
@@ -87,11 +86,11 @@ public class ContractServiceImpl implements ContractService {
 
         VasDetailResponseDto vasDetailResponseDto = vasService.getVasDetail(vasId);
 
-        return ApiResponse.success(vasDetailResponseDto);
+        return vasDetailResponseDto;
     }
 
     @Override
-    public ApiResponse<CouponDetailResponseDto> getCoupon(Period period, CustomUser customUser) {
+    public CouponDetailResponseDto getCoupon(Period period, CustomUser customUser) {
         User user = userRepository.findById(customUser.getId())
                 .orElseThrow(() -> new UserNotFoundException());
 
@@ -100,7 +99,7 @@ public class ContractServiceImpl implements ContractService {
 
         CouponDetailResponseDto couponDetailResponseDto = couponService.getCouponDetail(couponId);
 
-        return ApiResponse.success(couponDetailResponseDto);
+        return couponDetailResponseDto;
     }
 
     @Override
@@ -115,7 +114,7 @@ public class ContractServiceImpl implements ContractService {
 
     @Override
     @Transactional
-    public ReservationResponseDto cancelNextContract(CustomUser customUser) {
+    public void cancelNextContract(CustomUser customUser) {
         User user = userRepository.findById(customUser.getId())
                 .orElseThrow(() -> new UserNotFoundException());
 
@@ -124,13 +123,11 @@ public class ContractServiceImpl implements ContractService {
         Contract curContract = contractList.get(1);
 
         newContract.copyFrom(curContract);
-
-        return null; // ReservationResponseDto 여기에 뭘 담아야하는가
     }
 
     @Override
     @Transactional
-    public ReservationResponseDto updateNextContract(ReservationRequestDto requestDto, CustomUser customUser) {
+    public void updateNextContract(ReservationRequestDto requestDto, CustomUser customUser) {
         User user = userRepository.findById(customUser.getId())
                 .orElseThrow(() -> new UserNotFoundException());
 
@@ -139,8 +136,6 @@ public class ContractServiceImpl implements ContractService {
 
         Contract nextContract = contractRepository.findTop1ByUserOrderByIdDesc(user);
         nextContract.updateNextContract(bundle, requestDto.getPrice());
-
-        return null;
     }
 
     @Override
