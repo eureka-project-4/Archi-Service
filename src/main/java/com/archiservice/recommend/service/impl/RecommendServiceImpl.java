@@ -62,7 +62,6 @@ public class RecommendServiceImpl implements RecommendService {
 
     }
 
-    // TODO : 쿼리가 너무 많이 실행되서 redis 써야할듯
     @Override
     public RecommendPlanResponseDto recommendPlan(CustomUser user) {
         long userTagCode = user.getUser().getTagCode();

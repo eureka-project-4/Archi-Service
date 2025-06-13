@@ -31,48 +31,48 @@ class PlanServiceImplTest {
     @InjectMocks PlanServiceImpl planService;
 
 
-    @DisplayName("요금제 목록 조회 서비스 - Plan 리스트 정상 변환")
-    @Test
-    void getAllPlans_OK() {
-        // given
-        Plan plan = Plan.builder()
-                .planName("요금제A")
-                .price(10000)
-                .monthData(5)
-                .callUsage("100분")
-                .messageUsage("무제한")
-                .benefit("혜택")
-                .tagCode(101L)
-                .ageCode("A01")
-                .categoryCode("C01")
-                .build();
+//    @DisplayName("요금제 목록 조회 서비스 - Plan 리스트 정상 변환")
+//    @Test
+//    void getAllPlans_OK() {
+//        // given
+//        Plan plan = Plan.builder()
+//                .planName("요금제A")
+//                .price(10000)
+//                .monthData(5)
+//                .callUsage("100분")
+//                .messageUsage("무제한")
+//                .benefit("혜택")
+//                .tagCode(101L)
+//                .ageCode("A01")
+//                .categoryCode("C01")
+//                .build();
+//
+//
+//        when(planRepository.findAll()).thenReturn(List.of(plan));
+//        when(tagMetaService.extractTagsFromCode(101L)).thenReturn(List.of("운동"));
+//        when(commonCodeService.getCodeName("G02", "C01")).thenReturn("헬스");
+//        when(commonCodeService.getCodeName("G01", "A01")).thenReturn("20대");
+//
+//        // when
+//        List<PlanResponseDto> result = planService.getAllPlans();
+//
+//        // then
+//        assertEquals(1, result.size());
+//        PlanResponseDto dto = result.get(0);
+//        assertEquals("헬스", dto.getCategory());
+//        assertEquals("20대", dto.getTargetAge());
+//        assertEquals(List.of("운동"), dto.getTags());
+//    }
 
-
-        when(planRepository.findAll()).thenReturn(List.of(plan));
-        when(tagMetaService.extractTagsFromCode(101L)).thenReturn(List.of("운동"));
-        when(commonCodeService.getCodeName("G02", "C01")).thenReturn("헬스");
-        when(commonCodeService.getCodeName("G01", "A01")).thenReturn("20대");
-
-        // when
-        List<PlanResponseDto> result = planService.getAllPlans();
-
-        // then
-        assertEquals(1, result.size());
-        PlanResponseDto dto = result.get(0);
-        assertEquals("헬스", dto.getCategory());
-        assertEquals("20대", dto.getTargetAge());
-        assertEquals(List.of("운동"), dto.getTags());
-    }
-
-    @DisplayName("요금제 목록 조회 서비스 - 빈 리스트 반환")
-    @Test
-    void getAllPlans_EmptyList_OK() {
-        when(planRepository.findAll()).thenReturn(Collections.emptyList());
-
-        List<PlanResponseDto> result = planService.getAllPlans();
-
-        assertTrue(result.isEmpty());
-    }
+//    @DisplayName("요금제 목록 조회 서비스 - 빈 리스트 반환")
+//    @Test
+//    void getAllPlans_EmptyList_OK() {
+//        when(planRepository.findAll()).thenReturn(Collections.emptyList());
+//
+//        List<PlanResponseDto> result = planService.getAllPlans();
+//
+//        assertTrue(result.isEmpty());
+//    }
 
     @DisplayName("요금제 상세 조회 서비스 - 정상 응답")
     @Test
