@@ -54,8 +54,7 @@ public class SurveyServiceImpl implements SurveyService{
 		if (nextQuestionId == null) {
 			// 성향 테스트 종료 지점
 			List<String> tagCodes = metaService.extractTagsFromCode(tagCodeSum);
-			session.setAttribute("tagCodes", tagCodes);
-			return ApiResponse.success(new QuestionResponseDto("성향 테스트 종료", 0, List.of()));
+			return ApiResponse.success(new QuestionResponseDto("성향 테스트 종료", 0, List.of(), tagCodes));
 			
 		}else {
 			question = questionRepository.findById(nextQuestionId)
@@ -84,10 +83,11 @@ public class SurveyServiceImpl implements SurveyService{
 		
 		// JWT tagCode 정보 삽입
 		Map<String, Object> claims = new HashMap<>();
+		claims.put("userId", userId);
 		claims.put("tagCdoe", tagCode);
 		String tagCodeAccessToken = jwtUtil.generateCustomToken(claims, user.getEmail());
 		
-		session.removeAttribute("tagCodes");
+		session.removeAttribute("tagCodeSum");
 		return ApiResponse.success(tagCodeAccessToken);
 	}
 	
