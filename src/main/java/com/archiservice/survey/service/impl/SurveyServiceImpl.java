@@ -49,17 +49,14 @@ public class SurveyServiceImpl implements SurveyService{
 		
 	    session.setAttribute("tagCodeSum", tagCodeSum);
 	    
-		Question question;
-		
 		if (nextQuestionId == null) {
 			// 성향 테스트 종료 지점
 			List<String> tagCodes = metaService.extractTagsFromCode(tagCodeSum);
 			return ApiResponse.success(new QuestionResponseDto("성향 테스트 종료", 0, List.of(), tagCodes));
-			
-		}else {
-			question = questionRepository.findById(nextQuestionId)
-					.orElseThrow(() -> new BusinessException(ErrorCode.PRODUCT_NOT_FOUND, "문항이 존재하지 않습니다."));
 		}
+		
+		Question question = questionRepository.findById(nextQuestionId)
+					.orElseThrow(() -> new BusinessException(ErrorCode.PRODUCT_NOT_FOUND, "문항이 존재하지 않습니다."));
 		
 		QuestionResponseDto questionResponseDto = QuestionResponseDto.from(question);
 		
@@ -84,7 +81,7 @@ public class SurveyServiceImpl implements SurveyService{
 		// JWT tagCode 정보 삽입
 		Map<String, Object> claims = new HashMap<>();
 		claims.put("userId", userId);
-		claims.put("tagCdoe", tagCode);
+		claims.put("tagCode", tagCode);
 		String tagCodeAccessToken = jwtUtil.generateCustomToken(claims, user.getEmail());
 		
 		session.removeAttribute("tagCodeSum");
