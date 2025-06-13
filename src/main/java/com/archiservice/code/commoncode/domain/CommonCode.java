@@ -16,6 +16,14 @@ public class CommonCode {
 
     @Column(name = "common_name", length = 100)
     private String commonName;
+
+    public String getGroupCode() {
+        return commonCodeId != null ? commonCodeId.getGroupCode() : null;
+    }
+
+    public String getCommonCode() {
+        return commonCodeId != null ? commonCodeId.getCommonCode() : null;
+    }
 }
 
 

@@ -5,6 +5,10 @@ import com.archiservice.product.plan.dto.response.PlanDetailResponseDto;
 import com.archiservice.product.plan.dto.response.PlanResponseDto;
 import com.archiservice.product.plan.service.PlanService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,8 +25,8 @@ public class PlanController {
     private final PlanService planService;
 
     @GetMapping()
-    public ResponseEntity<ApiResponse<List<PlanResponseDto>>> getAllPlans() {
-        return ResponseEntity.ok(ApiResponse.success(planService.getAllPlans()));
+    public ResponseEntity<ApiResponse<Page<PlanResponseDto>>> getAllPlans(@PageableDefault(size = 20, sort = "planId", direction = Sort.Direction.ASC) Pageable pageable) {
+        return ResponseEntity.ok(ApiResponse.success(planService.getAllPlans(pageable)));
     }
 
     @GetMapping("/{planId}")

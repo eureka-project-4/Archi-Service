@@ -4,18 +4,35 @@ import com.archiservice.code.tagmeta.domain.TagMeta;
 import com.archiservice.code.tagmeta.repository.TagMetaRepository;
 import com.archiservice.code.tagmeta.service.TagMetaService;
 import io.jsonwebtoken.lang.Collections;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class TagMetaServiceImpl implements TagMetaService {
     private final TagMetaRepository tagMetaRepository;
+
+    private Map<Integer, TagMeta> tagMetaCache = new ConcurrentHashMap<>();
+
+    @EventListener(ApplicationReadyEvent.class)
+    public void loadAllTagMetas() {
+        List<TagMeta> allTagMetas = tagMetaRepository.findAll();
+        tagMetaCache = allTagMetas.stream()
+                .collect(Collectors.toConcurrentMap(
+                        TagMeta::getBitPosition,
+                        Function.identity()
+                ));
+    }
 
     @Override
     public List<String> extractTagsFromCode(Long tagCode) {
@@ -29,12 +46,13 @@ public class TagMetaServiceImpl implements TagMetaService {
             return Collections.emptyList();
         }
 
-        List<TagMeta> tagMetas = tagMetaRepository.findByBitPositionIn(activeBitPositions);
-
-        return tagMetas.stream()
+        return activeBitPositions.stream()
+                .map(tagMetaCache::get)
+                .filter(Objects::nonNull)
                 .map(TagMeta::getTagDescription)
-                .toList();
+                .collect(Collectors.toList());
     }
+
 
     private List<Integer> getActiveBitPositions(Long tagCode) {
         List<Integer> positions = new ArrayList<>();

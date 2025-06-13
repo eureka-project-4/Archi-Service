@@ -10,6 +10,8 @@ import com.archiservice.product.vas.dto.response.VasResponseDto;
 import com.archiservice.product.vas.repository.VasRepository;
 import com.archiservice.product.vas.service.VasService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,21 +22,20 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class VasServiceImpl implements VasService {
 
+    public static final String CATEGORY_GROUP_CODE = "G03"; // 부가 서비스
     private final VasRepository vasRepository;
     private final TagMetaService tagMetaService;
     private final CommonCodeService commonCodeService;
 
-    public static final String CATEGORY_GROUP_CODE = "G03"; // 부가 서비스
-
     @Override
-    public List<VasResponseDto> getAllVas() {
-        return vasRepository.findAll().stream()
-                .map(vas -> {
-                    List<String> tags = tagMetaService.extractTagsFromCode(vas.getTagCode());
-                    String category = commonCodeService.getCodeName(CATEGORY_GROUP_CODE, vas.getCategoryCode());
-                    return VasResponseDto.from(vas, tags, category);
-                })
-                .toList();
+    public Page<VasResponseDto> getAllVas(Pageable pageable) {
+        Page<Vas> vasPage = vasRepository.findAll(pageable);
+
+        return vasPage.map(vas -> {
+            List<String> tags = tagMetaService.extractTagsFromCode(vas.getTagCode());
+            String category = commonCodeService.getCodeName(CATEGORY_GROUP_CODE, vas.getCategoryCode());
+            return VasResponseDto.from(vas, tags, category);
+        });
     }
 
     @Override
