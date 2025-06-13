@@ -10,6 +10,8 @@ import com.archiservice.product.coupon.dto.response.CouponResponseDto;
 import com.archiservice.product.coupon.repository.CouponRepository;
 import com.archiservice.product.coupon.service.CouponService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,21 +22,20 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class CouponServiceImpl implements CouponService {
 
+    public static final String CATEGORY_GROUP_CODE = "G04";
     private final CouponRepository couponRepository;
     private final TagMetaService tagMetaService;
     private final CommonCodeService commonCodeService;
 
-    public static final String CATEGORY_GROUP_CODE = "G04";
-
     @Override
-    public List<CouponResponseDto> getAllCoupons() {
-        return couponRepository.findAll().stream()
-                .map(coupon -> {
-                    List<String> tags = tagMetaService.extractTagsFromCode(coupon.getTagCode());
-                    String category = commonCodeService.getCodeName(CATEGORY_GROUP_CODE, coupon.getCategoryCode());
-                    return CouponResponseDto.from(coupon, tags, category);
-                })
-                .toList();
+    public Page<CouponResponseDto> getAllCoupons(Pageable pageable) {
+        Page<Coupon> couponPage = couponRepository.findAll(pageable);
+
+        return couponPage.map(coupon -> {
+            List<String> tags = tagMetaService.extractTagsFromCode(coupon.getTagCode());
+            String category = commonCodeService.getCodeName(CATEGORY_GROUP_CODE, coupon.getCategoryCode());
+            return CouponResponseDto.from(coupon, tags, category);
+        });
     }
 
     @Override
