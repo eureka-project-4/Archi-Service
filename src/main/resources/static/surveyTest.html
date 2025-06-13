@@ -66,7 +66,7 @@
         	if (nextQuestionId !== null) {
         	    url += `?nextQuestionId=${nextQuestionId}`;
         	    if (tagCode !== null) url += `&tagCode=${tagCode}`;
-        	}
+        	}else if (tagCode !== null) url += `?tagCode=${tagCode}`;
         	
         	
             const response = await fetchWithAuth(url, {
@@ -79,7 +79,7 @@
                 const data = result.data;
                 console.log(data);
                 
-                if (nextQuestionId === null) {
+                if (!data.options || data.options.length === 0) {
                     // 설문 종료
                     document.getElementById('questionBox').style.display = 'none';
                     document.getElementById('optionBox').style.display = 'none';
