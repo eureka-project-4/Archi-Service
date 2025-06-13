@@ -10,6 +10,8 @@ import com.archiservice.product.plan.repository.PlanRepository;
 import com.archiservice.product.plan.service.PlanService;
 import com.archiservice.code.tagmeta.service.TagMetaService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,15 +30,15 @@ public class PlanServiceImpl implements PlanService {
     public static final String AGE_GROUP_CODE = "G01";
 
     @Override
-    public List<PlanResponseDto> getAllPlans() {
-        return planRepository.findAll().stream()
-                .map(plan -> {
-                    List<String> tags = tagMetaService.extractTagsFromCode(plan.getTagCode());
-                    String category = commonCodeService.getCodeName(CATEGORY_GROUP_CODE, plan.getCategoryCode());
-                    String targetAge = commonCodeService.getCodeName(AGE_GROUP_CODE, plan.getAgeCode());
-                    return PlanResponseDto.from(plan, tags, category, targetAge);
-                })
-                .toList();
+    public Page<PlanResponseDto> getAllPlans(Pageable pageable) {
+        Page<Plan> planPage = planRepository.findAll(pageable);
+
+        return planPage.map(plan -> {
+            List<String> tags = tagMetaService.extractTagsFromCode(plan.getTagCode());
+            String category = commonCodeService.getCodeName(CATEGORY_GROUP_CODE, plan.getCategoryCode());
+            String targetAge = commonCodeService.getCodeName(AGE_GROUP_CODE, plan.getAgeCode());
+            return PlanResponseDto.from(plan, tags, category, targetAge);
+        });
     }
 
     @Override
