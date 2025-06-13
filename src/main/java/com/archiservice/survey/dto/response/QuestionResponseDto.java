@@ -1,6 +1,5 @@
 package com.archiservice.survey.dto.response;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.archiservice.survey.domain.Question;
@@ -18,6 +17,7 @@ public class QuestionResponseDto {
 	String questionText;
 	int order;
 	List<OptionResponseDto> options;
+	List<String> tagCodes;
 	
 	public static QuestionResponseDto from(Question question) {
 		return QuestionResponseDto.builder()
