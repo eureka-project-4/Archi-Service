@@ -8,6 +8,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AuthMetadata {
-  private int tagCode;
-  private int ageCode;
+  private Long tagCode;
+  private String ageCode;
 }
