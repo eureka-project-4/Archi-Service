@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.server.ServerHttpRequest;
+import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
@@ -18,6 +19,7 @@ import org.springframework.web.socket.config.annotation.WebSocketTransportRegist
 import org.springframework.web.socket.server.support.DefaultHandshakeHandler;
 
 import java.security.Principal;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -32,50 +34,60 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     private static final int SEND_BUFFER_SIZE_LIMIT_BYTES = (int) DataSize.ofKilobytes(512).toBytes();
 
     private final JwtUtil jwtTokenProvider;
+    private final FilterChannelInterceptor filterChannelInterceptor;
 
     @Bean
     public DefaultHandshakeHandler handshakeHandler() {
         return new DefaultHandshakeHandler() {
             @Override
             protected Principal determineUser(ServerHttpRequest request,
-                WebSocketHandler wsHandler,
-                Map<String, Object> attributes) {
+                                              WebSocketHandler wsHandler,
+                                              Map<String, Object> attributes) {
                 String token = extractTokenFromRequest(request);
-                if (token != null && jwtTokenProvider.validateToken(token)) {
 
-                    // TODO: 토큰에서 userId, tagCode, ageCode 파싱(ex : String userId = jwtTokenProvider.getUserId(token))
-                    Long userId = 1L;
-                    int tagCode = 42;
-                    int ageCode = 3;
+                if (token != null) {
+                    boolean isValid = jwtTokenProvider.validateToken(token);
 
-                    return AuthInfo.of(userId, tagCode, ageCode);
+                    if (isValid) {
+                        Long userId = jwtTokenProvider.extractUserId(token);
+                        Long tagCode = jwtTokenProvider.extractTagCode(token);
+                        String ageCode = jwtTokenProvider.extractAgeCode(token);
+                        AuthInfo authInfo = AuthInfo.of(userId, ageCode, tagCode);
+                        return authInfo;
+                    }
                 }
                 return null;
             }
         };
     }
 
-    private String extractTokenFromRequest(ServerHttpRequest request) {
-        String authHeader = request.getHeaders().getFirst("Authorization");
-        if(authHeader != null && authHeader.startsWith("Bearer ")) {
-            return authHeader.substring(7);
-        }
-
-        String query = request.getURI().getQuery();
-        if(query!=null){
-            return parseTokenFromQuery(query);
-        }
-        
-        return null;
+    @Override
+    public void configureClientInboundChannel(ChannelRegistration registration) {
+        registration.interceptors(filterChannelInterceptor);
     }
 
-    private String parseTokenFromQuery(String query) {
-        String[] params = query.split("&");
-        for (String param : params) {
-            if (param.startsWith("token=")) {
-                return param.substring(6);
+
+    private String extractTokenFromRequest(ServerHttpRequest request) {
+
+        List<String> authHeaders = request.getHeaders().get("Authorization");
+        if (authHeaders != null && !authHeaders.isEmpty()) {
+            String authHeader = authHeaders.get(0);
+            if (authHeader.startsWith("Bearer ")) {
+                return authHeader.substring(7);
             }
         }
+
+        // 쿼리 파라미터에서 accessToken 찾기 (수정된 부분)
+        String query = request.getURI().getQuery();
+        if (query != null) {
+            for (String param : query.split("&")) {
+                if (param.startsWith("accessToken=")) {
+                    String token = param.substring(12);
+                    return token;
+                }
+            }
+        }
+
         return null;
     }
 

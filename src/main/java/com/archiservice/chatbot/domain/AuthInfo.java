@@ -7,17 +7,17 @@ import lombok.Getter;
 public class AuthInfo implements Principal {
 
   private final Long userId;
-  private final int tagCode;
-  private final int ageCode;
+  private final String ageCode;
+  private final Long tagCode;
 
-  private AuthInfo(Long userId, int tagCode, int ageCode) {
+  private AuthInfo(Long userId, String ageCode, Long tagCode) {
     this.userId = userId;
     this.tagCode = tagCode;
     this.ageCode = ageCode;
   }
 
-  public static AuthInfo of(Long userId, int tagCode, int ageCode) {
-    return new AuthInfo(userId, tagCode, ageCode);
+  public static AuthInfo of(Long userId, String ageCode, Long tagCode) {
+    return new AuthInfo(userId, ageCode ,tagCode);
   }
 
   @Override

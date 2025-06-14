@@ -65,4 +65,6 @@ public class CustomUser implements UserDetails {
     public Long getTagCode() {
     	return user.getTagCode();
     }
+
+    public String getAgeCode() { return user.getAgeCode(); }
 }
