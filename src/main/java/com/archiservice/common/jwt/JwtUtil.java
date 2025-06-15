@@ -1,5 +1,6 @@
 package com.archiservice.common.jwt;
 
+import com.archiservice.common.security.CustomUser;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
@@ -78,6 +79,7 @@ public class JwtUtil {
         Map<String, Object> claims = new HashMap<>();
         claims.put("userId", customUser.getId());
         claims.put("tagCode", customUser.getTagCode());
+        claims.put("ageCode", customUser.getAgeCode());
         return createToken(claims, customUser.getUsername(), accessTokenExpiration);
     }
 
@@ -85,6 +87,7 @@ public class JwtUtil {
         Map<String, Object> claims = new HashMap<>();
         claims.put("userId", customUser.getId());
         claims.put("tagCode", customUser.getTagCode());
+        claims.put("ageCode", customUser.getAgeCode());
         return createToken(claims, customUser.getUsername(), refreshTokenExpiration);
     }
 
@@ -121,4 +124,42 @@ public class JwtUtil {
     public String generateCustomToken(Map<String, Object> claims, String subject) {
     	return createToken(claims, subject, accessTokenExpiration);
     }
+
+
+    public Long extractUserId(String token) {
+        final Claims claims = extractAllClaims(token);
+        Object userId = claims.get("userId");
+        if (userId instanceof Integer) {
+            return ((Integer) userId).longValue();
+        } else if (userId instanceof Long) {
+            return (Long) userId;
+        } else if (userId instanceof String) {
+            return Long.parseLong((String) userId);
+        } else {
+            throw new IllegalArgumentException("Invalid userId type in token: " + userId);
+        }
+    }
+
+    public Long extractTagCode(String token) {
+        final Claims claims = extractAllClaims(token);
+        Object tagCode = claims.get("tagCode");
+        if (tagCode instanceof Integer) {
+            return ((Integer) tagCode).longValue();
+        } else if (tagCode instanceof Long) {
+            return (Long) tagCode;
+        } else if (tagCode instanceof String) {
+            return Long.parseLong((String) tagCode);
+        } else {
+            throw new IllegalArgumentException("Invalid tagCode type in token: " + tagCode);
+        }
+    }
+
+    public String extractAgeCode(String token) {
+        final Claims claims = extractAllClaims(token);
+        return claims.get("ageCode", String.class);
+    }
+
+
+
+
 }
