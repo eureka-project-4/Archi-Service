@@ -21,7 +21,7 @@ public interface ContractRepository extends JpaRepository<Contract, Long> {
             "LIMIT 1 OFFSET :offset", nativeQuery = true)
     Optional<Long> findPlanIdByOffset(@Param("userId") Long userId, @Param("offset") int offset);
 
-    @Query(value = "SELECT pb.service_id " +
+    @Query(value = "SELECT pb.vas_id " +
             "FROM contracts c " +
             "JOIN product_bundles pb ON c.product_bundle_id = pb.product_bundle_id " +
             "WHERE c.user_id = :userId " +
