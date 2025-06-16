@@ -46,4 +46,16 @@ public class ProductBundleController {
             return ResponseEntity.ok(ApiResponse.success("싫어요", null));
         }
     }
+
+
+    @GetMapping("/sum-tag-code/{planId}/{vasId}/{couponId}")
+    public ResponseEntity<ApiResponse<Long>> getCombinedTagCode(
+            @PathVariable long planId,
+            @PathVariable long vasId,
+            @PathVariable long couponId) {
+
+        long combinedTagCode = bundleService.getCombinedTagCode(planId, vasId, couponId);
+        return ResponseEntity.ok(ApiResponse.success("tagCode 합 생성완료" ,combinedTagCode));
+    }
+
 }
