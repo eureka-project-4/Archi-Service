@@ -50,12 +50,11 @@ public class ProductBundleController {
 
     @GetMapping("/sum-tag-code/{planId}/{vasId}/{couponId}")
     public ResponseEntity<ApiResponse<Long>> getCombinedTagCode(
-            @PathVariable long planId,
-            @PathVariable long vasId,
-            @PathVariable long couponId) {
+            @RequestBody CreateBundleRequestDto requestDto) {
 
-        long combinedTagCode = bundleService.getCombinedTagCode(planId, vasId, couponId);
+        long combinedTagCode = bundleService.getCombinedTagCode(requestDto.getPlanId(), requestDto.getVasId(), requestDto.getCouponId());
         return ResponseEntity.ok(ApiResponse.success("tagCode 합 생성완료" ,combinedTagCode));
     }
+
 
 }
